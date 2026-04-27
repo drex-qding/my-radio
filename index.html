@@ -5,7 +5,6 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>MY RADIO — 464首歌蒸馏成的AI电台</title>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=Noto+Sans+SC:wght@300;400;500;700&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/aplayer@1.10.1/dist/APlayer.min.css">
 <style>
 *,*::before,*::after{margin:0;padding:0;box-sizing:border-box}
 :root{
@@ -107,59 +106,17 @@ body{font-family:'Inter','Noto Sans SC',-apple-system,sans-serif;background:var(
 .empty-state p{font-size:15px}
 
 /* ===== PLAYER BAR ===== */
-.player-bar{position:fixed;bottom:0;left:0;right:0;z-index:100;transform:translateY(100%);transition:transform .4s cubic-bezier(.4,0,.2,1)}
-.player-bar.show{transform:translateY(0)}
-.player-inner{max-width:1200px;margin:0 auto;display:flex;align-items:center;gap:16px;padding:8px 20px 8px 20px}
-.player-cover{width:44px;height:44px;border-radius:var(--radius);background:var(--bg3);display:flex;align-items:center;justify-content:center;font-size:20px;flex-shrink:0}
-.player-info{flex:1;min-width:0;max-width:200px}
-.player-info .p-title{font-size:14px;font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-.player-info .p-artist{font-size:13px;color:var(--text3)}
-.player-progress{flex:2;display:flex;align-items:center;gap:10px}
-.player-progress input[type=range]{flex:1;-webkit-appearance:none;height:4px;background:var(--bg4);border-radius:2px;outline:none}
-.player-progress input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:12px;height:12px;border-radius:50%;background:var(--accent);cursor:pointer}
-.player-controls{display:flex;align-items:center;gap:8px}
-.player-controls button{width:36px;height:36px;border-radius:50%;border:none;background:none;color:var(--text);cursor:pointer;display:flex;align-items:center;justify-content:center;transition:background .2s}
-.player-controls button:hover{background:var(--bg3)}
-.player-controls .main-play{width:42px;height:42px;background:var(--accent);color:#fff}
-.player-controls .main-play:hover{background:var(--accent2)}
-.player-controls svg{width:18px;height:18px}
-
-/* ===== APLAYER DARK THEME OVERRIDE ===== */
-.aplayer{background:var(--bg)!important;border:none!important;box-shadow:0 -1px 0 var(--bg4)!important;margin:0!important;border-radius:0!important}
-.aplayer .aplayer-body{background:var(--bg)!important}
-.aplayer .aplayer-info{padding:0 0 0 10px!important}
-.aplayer .aplayer-info .aplayer-music .aplayer-title{color:var(--text)!important;font-size:14px!important;font-weight:600!important}
-.aplayer .aplayer-info .aplayer-music .aplayer-author{color:var(--text3)!important;font-size:12px!important}
-.aplayer .aplayer-info .aplayer-controller .aplayer-bar-wrap .aplayer-bar{background:var(--bg4)!important;border-radius:2px!important}
-.aplayer .aplayer-info .aplayer-controller .aplayer-bar-wrap .aplayer-bar .aplayer-loaded{background:var(--bg3)!important;border-radius:2px!important}
-.aplayer .aplayer-info .aplayer-controller .aplayer-bar-wrap .aplayer-bar .aplayer-played{background:var(--accent)!important;border-radius:2px!important}
-.aplayer .aplayer-info .aplayer-controller .aplayer-bar-wrap .aplayer-bar .aplayer-played .aplayer-thumb{background:var(--accent)!important;border:2px solid var(--bg)!important;box-shadow:none!important}
-.aplayer .aplayer-info .aplayer-controller .aplayer-time{color:var(--text3)!important;font-size:12px!important}
-.aplayer .aplayer-icon{fill:var(--text3)!important}
-.aplayer .aplayer-icon:hover{fill:var(--text)!important}
-.aplayer .aplayer-lrc{display:none!important}
-.aplayer .aplayer-pic{border-radius:8px!important}
-.aplayer .aplayer-volume-wrap .aplayer-volume-bar{background:var(--bg4)!important}
-.aplayer .aplayer-volume-wrap .aplayer-volume-bar .aplayer-volume{background:var(--accent)!important}
-.aplayer .aplayer-list{background:var(--bg)!important;border-top:1px solid var(--bg4)!important}
-.aplayer .aplayer-list ol li{color:var(--text2)!important;border-top:none!important;font-size:13px!important}
-.aplayer .aplayer-list ol li.aplayer-list-light{background:var(--bg2)!important;color:var(--accent)!important}
-.aplayer .aplayer-list ol li:hover{background:var(--bg2)!important}
-.aplayer .aplayer-list .aplayer-list-cur{color:var(--accent)!important}
-.aplayer .aplayer-list .aplayer-list-index{color:var(--text3)!important}
-.aplayer svg{fill:currentColor}
-.aplayer .aplayer-icon{fill:var(--text3)!important}
-
-/* Player loading state */
-.player-loading{display:none;align-items:center;gap:8px;color:var(--text3);font-size:13px;padding:10px 20px;background:var(--bg)}
-.player-loading.show{display:flex}
-.player-loading .spinner{width:16px;height:16px;border:2px solid var(--bg4);border-top-color:var(--accent);border-radius:50%;animation:spin .6s linear infinite}
-@keyframes spin{to{transform:rotate(360deg)}}
-
-/* Player fallback button */
-.player-fallback{display:none;padding:8px 20px;background:var(--bg);border-top:1px solid var(--bg4);text-align:center}
+.player-bar{position:fixed;bottom:0;left:0;right:0;z-index:100;transform:translateY(100%);transition:transform .4s cubic-bezier(.4,0,.2,1);pointer-events:none}
+.player-bar.show{transform:translateY(0);pointer-events:auto}
+.player-bar-inner{background:var(--bg);border-top:1px solid var(--bg4);max-width:1200px;margin:0 auto;overflow:hidden;border-radius:var(--radius-lg) var(--radius-lg) 0 0;box-shadow:0 -4px 30px rgba(0,0,0,.4)}
+.player-bar-header{display:flex;align-items:center;justify-content:space-between;padding:12px 16px;cursor:move}
+.player-bar-title{font-size:14px;font-weight:600;color:var(--text2)}
+.player-bar-close{width:28px;height:28px;border-radius:50%;border:none;background:var(--bg3);color:var(--text3);cursor:pointer;font-size:14px;display:flex;align-items:center;justify-content:center;transition:all .2s}
+.player-bar-close:hover{background:var(--bg4);color:var(--text)}
+.player-bar iframe{width:100%;height:80px;display:block;border:none}
+.player-fallback{display:none;position:fixed;bottom:0;left:0;right:0;padding:14px 20px;background:var(--bg);border-top:1px solid var(--bg4);text-align:center;z-index:99}
 .player-fallback.show{display:block}
-.player-fallback a{color:var(--accent);text-decoration:none;font-size:13px;transition:color .2s}
+.player-fallback a{color:var(--accent);text-decoration:none;font-size:14px;transition:color .2s}
 .player-fallback a:hover{color:var(--accent2)}
 
 /* ===== FOOTER ===== */
@@ -277,446 +234,446 @@ body{font-family:'Inter','Noto Sans SC',-apple-system,sans-serif;background:var(
 
 <!-- PLAYER BAR -->
 <div class="player-bar" id="playerBar">
-  <div id="aplayer-container"></div>
-</div>
-<div class="player-loading" id="playerLoading">
-  <div class="spinner"></div>
-  <span>正在搜索音乐源…</span>
+  <div class="player-bar-inner" id="playerBarInner">
+    <div class="player-bar-header">
+      <div class="player-bar-title" id="playerBarTitle">♪ 正在播放</div>
+      <button class="player-bar-close" id="playerBarClose" title="关闭">✕</button>
+    </div>
+    <iframe id="playerFrame" frameborder="0" allow="autoplay" allowfullscreen></iframe>
+  </div>
 </div>
 <div class="player-fallback" id="playerFallback">
   <a id="fallbackLink" href="#" target="_blank">▶ 在网易云音乐中打开</a>
 </div>
 
-<script src="https://cdn.jsdelivr.net/npm/aplayer@1.10.1/dist/APlayer.min.js"></script>
-
 <script>
 // ===== SONG DATA =====
 const songs=[
-{t:"我看着你的时候",a:"李荣浩",m:"深夜独白",z:"华语抒情"},
-{t:"如果可以",a:"韦礼安",m:"深夜独白",z:"华语抒情"},
-{t:"20 Questions",a:"磊落 / 阿尔达克",m:"独立漫游",z:"独立探索"},
-{t:"宿醉之星",a:"琥珀乐队",m:"独立漫游",z:"独立探索"},
-{t:"雪人",a:"驼儿",m:"深夜独白",z:"华语新声"},
-{t:"Would You Fall in Love with Me Again",a:"Jorge Rivera-Herrans",m:"午夜幻想",z:"百老汇之夜"},
-{t:"Puppeteer",a:"Jorge Rivera-Herrans",m:"午夜幻想",z:"百老汇之夜"},
-{t:"common love",a:"驼儿 / 说唱者联盟",m:"深夜独白",z:"华语新声"},
-{t:"在日落前拥抱",a:"尕尔东",m:"深夜独白",z:"华语新声"},
-{t:"Listen",a:"Beyoncé",m:"心动频率",z:"欧美流行"},
-{t:"Straight to the Soul",a:"Ironwood Union",m:"治愈花园",z:"独立探索"},
-{t:"blue (with MINNIE)",a:"yung kai / MINNIE",m:"治愈花园",z:"欧美流行"},
-{t:"我想和你一起",a:"温蒂漫步",m:"治愈花园",z:"独立探索"},
-{t:"误把栾花当桂花",a:"YN-K",m:"治愈花园",z:"华语新声"},
-{t:"可风",a:"黄建为",m:"治愈花园",z:"华语民谣"},
-{t:"圈套",a:"Fine乐团",m:"心动频率",z:"华语新声"},
-{t:"喜欢",a:"张悬",m:"治愈花园",z:"华语民谣"},
-{t:"我发现你",a:"Fine乐团",m:"心动频率",z:"华语新声"},
-{t:"听见下雨的声音",a:"魏如昀",m:"深夜独白",z:"华语抒情"},
-{t:"SORRY",a:"比莉",m:"深夜独白",z:"华语经典"},
-{t:"还是会想你",a:"Fine乐团",m:"深夜独白",z:"华语新声"},
-{t:"How Long, How Low?",a:"Chance Peña / Hayd",m:"治愈花园",z:"欧美流行"},
-{t:"夏夜露天电影",a:"白色海岸",m:"治愈花园",z:"华语新声"},
-{t:"歩いても 歩いても",a:"GONTITI",m:"治愈花园",z:"日系治愈"},
-{t:"Ladyfingers",a:"Ryan Gebhardt",m:"治愈花园",z:"独立探索"},
-{t:"disintegrate",a:"KMurdock Music Group",m:"独立漫游",z:"独立探索"},
-{t:"This isn't what I planned",a:"virgin cigarettes",m:"独立漫游",z:"独立探索"},
-{t:"You & I",a:"Avant",m:"心动频率",z:"R&B灵魂"},
-{t:"呼吸决定",a:"Fine乐团",m:"心动频率",z:"华语新声"},
-{t:"One Wish",a:"Ray J",m:"心动频率",z:"R&B灵魂"},
-{t:"Oh Honey",a:"Delegation",m:"心动频率",z:"R&B灵魂"},
-{t:"再次爱上你",a:"阿里郎",m:"深夜独白",z:"华语经典"},
-{t:"拆穿",a:"黄绮珊",m:"深夜独白",z:"华语抒情"},
-{t:"Gas Station Diner",a:"AGA",m:"治愈花园",z:"粤语世界"},
-{t:"Pap",a:"Kidult.",m:"独立漫游",z:"独立探索"},
-{t:"Give It Up",a:"黄玠玮",m:"治愈花园",z:"华语新声"},
-{t:"June & August",a:"GONTITI",m:"治愈花园",z:"日系治愈"},
-{t:"Nobody",a:"Charlie Jeer",m:"独立漫游",z:"独立探索"},
-{t:"Laundromat",a:"Nivea",m:"心动频率",z:"R&B灵魂"},
-{t:"I Miss You",a:"ROCOBERRY",m:"深夜独白",z:"韩系OST"},
-{t:"甜蜜的麻烦",a:"OK绷",m:"治愈花园",z:"华语新声"},
-{t:"There Goes My Baby",a:"d4vd",m:"深夜独白",z:"欧美流行"},
-{t:"Way Back Into Love",a:"Hugh Grant / Drew Barrymore",m:"心动频率",z:"电影原声"},
-{t:"One Of The Girls",a:"The Weeknd / JENNIE",m:"心动频率",z:"欧美流行"},
-{t:"Just the Way You Are",a:"Bruno Mars",m:"心动频率",z:"欧美流行"},
-{t:"嘲笑",a:"Fine乐团",m:"深夜独白",z:"华语新声"},
-{t:"Save Your Tears",a:"The Weeknd / Ariana Grande",m:"心动频率",z:"欧美流行"},
-{t:"34+35",a:"Ariana Grande",m:"心动频率",z:"欧美流行"},
-{t:"Soft Lips",a:"BlankCh3ck",m:"治愈花园",z:"独立探索"},
-{t:"Bleeding Love",a:"Ni/Co",m:"深夜独白",z:"欧美流行"},
-{t:"Next To You",a:"Charlotte Cardin",m:"治愈花园",z:"欧美流行"},
-{t:"Peaches",a:"Justin Bieber / Daniel Caesar",m:"治愈花园",z:"欧美流行"},
-{t:"爱你没差",a:"周杰伦",m:"深夜独白",z:"华语经典"},
-{t:"等你下课",a:"周杰伦 / 杨瑞代",m:"心动频率",z:"华语经典"},
-{t:"学不会",a:"林俊杰",m:"深夜独白",z:"华语抒情"},
-{t:"不该",a:"周杰伦 / 张惠妹",m:"深夜独白",z:"华语经典"},
-{t:"Shut up My Moms Calling",a:"Hotel Ugly",m:"独立漫游",z:"独立探索"},
-{t:"One More Light",a:"Linkin Park",m:"深夜独白",z:"欧美摇滚"},
-{t:"Snow Of Fate",a:"米卡",m:"治愈花园",z:"华语新声"},
-{t:"初恋旧爱新欢",a:"RAiNBOW计划 / 林力尧",m:"心动频率",z:"华语新声"},
-{t:"DREAM",a:"BABYMONSTER",m:"心动频率",z:"K-Pop"},
-{t:"I Love You 3000",a:"해리안 윤소안",m:"心动频率",z:"韩系OST"},
-{t:"time machine",a:"mj apanay / aren park",m:"治愈花园",z:"独立探索"},
-{t:"Sweet",a:"Cigarettes After Sex",m:"治愈花园",z:"梦幻流行"},
-{t:"Deadman",a:"蔡徐坤",m:"独立漫游",z:"华语新声"},
-{t:"Come Around Me",a:"Justin Bieber",m:"治愈花园",z:"欧美流行"},
-{t:"Julie.",a:"Gallant",m:"治愈花园",z:"R&B灵魂"},
-{t:"City Of Stars",a:"Ryan Gosling / Emma Stone",m:"午夜幻想",z:"电影原声"},
-{t:"矜持",a:"王菲",m:"深夜独白",z:"华语经典"},
-{t:"All I Wanna Do",a:"Kim Waters",m:"治愈花园",z:"R&B灵魂"},
-{t:"nightfall",a:"aren park",m:"深夜独白",z:"独立探索"},
-{t:"warm",a:"Ariana Grande",m:"治愈花园",z:"欧美流行"},
-{t:"watch you sleep.",a:"girl in red",m:"深夜独白",z:"独立探索"},
-{t:"Open Hearts",a:"HAEVN / Birdy",m:"治愈花园",z:"欧美流行"},
-{t:"好好说再见",a:"陶喆 / 关诗敏",m:"深夜独白",z:"华语抒情"},
-{t:"twilight zone",a:"Ariana Grande",m:"午夜幻想",z:"欧美流行"},
-{t:"过",a:"王嘉尔 / 林俊杰",m:"深夜独白",z:"华语新声"},
-{t:"I Love You So",a:"The Walters",m:"心动频率",z:"欧美流行"},
-{t:"笨蛋，混蛋",a:"陆虎 / 何洁",m:"心动频率",z:"华语新声"},
-{t:"梦中人",a:"亚森",m:"午夜幻想",z:"华语新声"},
-{t:"We Could Still Be Happy",a:"Rachael Yamagata",m:"治愈花园",z:"独立探索"},
-{t:"The Moon Song",a:"Scarlett Johansson",m:"治愈花园",z:"电影原声"},
-{t:"Comfortable",a:"Victor Ray",m:"治愈花园",z:"R&B灵魂"},
-{t:"秘闻",a:"黄誉博",m:"深夜独白",z:"华语新声"},
-{t:"躲雨",a:"Sophis",m:"治愈花园",z:"独立探索"},
-{t:"去看星星好不好",a:"陈翌朦",m:"治愈花园",z:"华语新声"},
-{t:"魔方",a:"Milie",m:"治愈花园",z:"独立探索"},
-{t:"梦话",a:"王子为",m:"深夜独白",z:"华语新声"},
-{t:"拆穿",a:"小霞",m:"深夜独白",z:"华语抒情"},
-{t:"唯一",a:"告五人",m:"心动频率",z:"华语新声"},
-{t:"はんなり",a:"ko-ko-ya",m:"治愈花园",z:"日系治愈"},
-{t:"太聪明",a:"陈绮贞",m:"深夜独白",z:"华语民谣"},
-{t:"果蝇与放坏的西柚",a:"陈越龙",m:"独立漫游",z:"华语新声"},
-{t:"Last Days",a:"吉田靖",m:"治愈花园",z:"日系治愈"},
-{t:"一格格",a:"卫兰",m:"心动频率",z:"粤语世界"},
-{t:"浴室",a:"旺仔加真露",m:"独立漫游",z:"华语新声"},
-{t:"刻在我心底的名字",a:"JulianZheng",m:"深夜独白",z:"华语抒情"},
-{t:"圣诞结",a:"陈奕迅",m:"深夜独白",z:"粤语世界"},
-{t:"River Flows In You",a:"纯音乐",m:"治愈花园",z:"钢琴冥想"},
-{t:"剪爱",a:"关喆",m:"深夜独白",z:"华语抒情"},
-{t:"III",a:"Athletics",m:"治愈花园",z:"后摇"},
-{t:"梦伴",a:"李悦君",m:"深夜独白",z:"粤语世界"},
-{t:"Begging You",a:"2LSON / 孝彬",m:"心动频率",z:"韩系OST"},
-{t:"Satisfied",a:"Renee Elise Goldsberry",m:"午夜幻想",z:"百老汇之夜"},
-{t:"Blah Blah Blah",a:"Lukie.Y",m:"独立漫游",z:"独立探索"},
-{t:"Hang on Little Tomato",a:"Pink Martini",m:"治愈花园",z:"经典爵士"},
-{t:"missing you",a:"Sevn Dayz",m:"深夜独白",z:"独立探索"},
-{t:"If I Ain't Got You",a:"Brandon Victor Dixon",m:"深夜独白",z:"R&B灵魂"},
-{t:"Hideaway",a:"Cigarettes After Sex",m:"治愈花园",z:"梦幻流行"},
-{t:"和你",a:"余佳运",m:"心动频率",z:"华语新声"},
-{t:"当两颗心",a:"罗森涛",m:"心动频率",z:"华语新声"},
-{t:"迷雾女士",a:"杨楚骁",m:"午夜幻想",z:"华语新声"},
-{t:"小孩",a:"罗森涛",m:"深夜独白",z:"华语新声"},
-{t:"我最喜欢冷天气",a:"DeeZoo",m:"治愈花园",z:"华语新声"},
-{t:"a song for love",a:"春畑道哉",m:"治愈花园",z:"日系治愈"},
-{t:"江湖",a:"鲸鱼马戏团",m:"治愈花园",z:"后摇"},
-{t:"凉夜窗情",a:"小虫",m:"深夜独白",z:"华语经典"},
-{t:"Billie Jean",a:"青山黛玛",m:"心动频率",z:"日系治愈"},
-{t:"恢弘的大梦",a:"鲸鱼马戏团",m:"治愈花园",z:"后摇"},
-{t:"Deep Green",a:"Christian Kuria",m:"治愈花园",z:"独立探索"},
-{t:"晚安",a:"鹿先森乐队",m:"治愈花园",z:"华语民谣"},
-{t:"荒漠上行走",a:"亚森",m:"独立漫游",z:"华语新声"},
-{t:"春日小径花园",a:"Furyl",m:"治愈花园",z:"独立探索"},
-{t:"I Wish",a:"Faime",m:"治愈花园",z:"独立探索"},
-{t:"进入你梦里",a:"银河快递",m:"午夜幻想",z:"华语新声"},
-{t:"不会太难",a:"丁祾",m:"深夜独白",z:"华语新声"},
-{t:"Falling In Love",a:"Cigarettes After Sex",m:"治愈花园",z:"梦幻流行"},
-{t:"为何离开",a:"罗森涛",m:"深夜独白",z:"华语新声"},
-{t:"Dehors",a:"Jordann",m:"治愈花园",z:"独立探索"},
-{t:"轻不着地",a:"before the night ends",m:"治愈花园",z:"华语新声"},
-{t:"山路",a:"怪豆儿 / 李璟崎",m:"治愈花园",z:"华语新声"},
-{t:"五官",a:"闫泽欢",m:"独立漫游",z:"华语新声"},
-{t:"Pines",a:"Men I Trust",m:"治愈花园",z:"梦幻流行"},
-{t:"污水塘",a:"惘闻",m:"独立漫游",z:"后摇"},
-{t:"pine cone",a:"金車厘子",m:"治愈花园",z:"华语新声"},
-{t:"Doin Nothing",a:"Seth Liane",m:"治愈花园",z:"独立探索"},
-{t:"Just Take Me in Your Arms",a:"Alfonso De Vilallonga",m:"治愈花园",z:"独立探索"},
-{t:"Defrosting Song",a:"Alfonso De Vilallonga",m:"治愈花园",z:"独立探索"},
-{t:"Let's Get The Mood Right",a:"Johnny Gill",m:"心动频率",z:"R&B灵魂"},
-{t:"Fallin' Out",a:"Keyshia Cole",m:"深夜独白",z:"R&B灵魂"},
-{t:"渐近自由",a:"熊猫堂",m:"心动频率",z:"华语新声"},
-{t:"Tejano Blue",a:"Cigarettes After Sex",m:"治愈花园",z:"梦幻流行"},
-{t:"Thirsty",a:"Geoffroy / Men I Trust",m:"治愈花园",z:"梦幻流行"},
-{t:"Hush",a:"The Marías",m:"治愈花园",z:"独立探索"},
-{t:"Done for Me",a:"Charlie Puth / Kehlani",m:"心动频率",z:"欧美流行"},
-{t:"低度酒摄入陷阱",a:"猫仙人",m:"独立漫游",z:"华语新声"},
-{t:"Shadow Room",a:"Brian Cheng",m:"独立漫游",z:"华语新声"},
-{t:"Always",a:"Daniel Caesar",m:"治愈花园",z:"R&B灵魂"},
-{t:"Cruisin'",a:"Sioen",m:"治愈花园",z:"独立探索"},
-{t:"Not My Neighbour",a:"Niko Walters",m:"治愈花园",z:"独立探索"},
-{t:"黑色静态",a:"杨瑞代 / Lara梁心颐",m:"午夜幻想",z:"华语新声"},
-{t:"月光",a:"杨瑞代 / 周杰伦",m:"深夜独白",z:"华语经典"},
-{t:"Freezing",a:"syd B",m:"深夜独白",z:"独立探索"},
-{t:"Annie's Vision",a:"Green Pitch",m:"治愈花园",z:"独立探索"},
-{t:"Wake Up Call",a:"Mel Blue",m:"独立漫游",z:"独立探索"},
-{t:"漫步香港1999",a:"白浩贤",m:"治愈花园",z:"粤语世界"},
-{t:"Worship",a:"Ari Abdul",m:"独立漫游",z:"独立探索"},
-{t:"the boy is mine",a:"Brown Eyed Girl",m:"心动频率",z:"K-Pop"},
-{t:"Whiskey and Morphine",a:"Alexander Jean",m:"深夜独白",z:"独立探索"},
-{t:"Wish",a:"魏诗莹",m:"治愈花园",z:"华语新声"},
-{t:"Doors",a:"Us The Duo",m:"心动频率",z:"欧美流行"},
-{t:"游荡的人",a:"好乐团 / 李玖哲",m:"独立漫游",z:"华语新声"},
-{t:"4ever",a:"Elhé / gabby parafina",m:"治愈花园",z:"独立探索"},
-{t:"different",a:"leejean",m:"独立漫游",z:"华语新声"},
-{t:"Earned It",a:"The Weeknd",m:"心动频率",z:"欧美流行"},
-{t:"Set for Life",a:"Trent Dabbs",m:"治愈花园",z:"独立探索"},
-{t:"Too Sweet",a:"Hozier",m:"治愈花园",z:"欧美流行"},
-{t:"vampire",a:"Olivia Rodrigo",m:"独立漫游",z:"欧美流行"},
-{t:"Float",a:"Olivia Dean",m:"治愈花园",z:"欧美流行"},
-{t:"Delectable",a:"Lindsxy Mesenburg",m:"治愈花园",z:"独立探索"},
-{t:"虹",a:"Brian Cheng",m:"独立漫游",z:"华语新声"},
-{t:"Mushroom",a:"Brian Cheng",m:"独立漫游",z:"华语新声"},
-{t:"聪明不聪明",a:"丁世光",m:"心动频率",z:"华语新声"},
-{t:"Waiting Is A Waste",a:"Mina Okabe",m:"治愈花园",z:"独立探索"},
-{t:"小师妹",a:"丁世光",m:"心动频率",z:"华语新声"},
-{t:"Rain Watcher",a:"惘闻",m:"治愈花园",z:"后摇"},
-{t:"Van Gogh",a:"Virginio Aiello",m:"治愈花园",z:"钢琴冥想"},
-{t:"her shadow",a:"Thomas Ng",m:"深夜独白",z:"独立探索"},
-{t:"I'm Not a Gentleman",a:"杨瑞代",m:"独立漫游",z:"华语新声"},
-{t:"One Last Dance",a:"Us The Duo",m:"心动频率",z:"欧美流行"},
-{t:"Lonely God",a:"惘闻",m:"独立漫游",z:"后摇"},
-{t:"散步",a:"张荣昊",m:"治愈花园",z:"华语新声"},
-{t:"Rest Assured",a:"Jeff Bernat",m:"治愈花园",z:"R&B灵魂"},
-{t:"我在等你按下播放键",a:"莫非定律乐团",m:"深夜独白",z:"华语新声"},
-{t:"打上花火",a:"Daoko / 米津玄師",m:"午夜幻想",z:"日系治愈"},
-{t:"Simon",a:"丁世光",m:"心动频率",z:"华语新声"},
-{t:"Costa da Caparica",a:"RIOPY",m:"治愈花园",z:"钢琴冥想"},
-{t:"Duet",a:"Rachael Yamagata",m:"心动频率",z:"独立探索"},
-{t:"Puppy",a:"Charlotte Cardin",m:"心动频率",z:"欧美流行"},
-{t:"台北车站",a:"飞石号",m:"治愈花园",z:"华语新声"},
-{t:"心慌",a:"邓见超",m:"心动频率",z:"华语新声"},
-{t:"Language",a:"Fintan",m:"治愈花园",z:"独立探索"},
-{t:"Happy Valentine",a:"曹格",m:"心动频率",z:"华语抒情"},
-{t:"Daisy",a:"Perry Pluto",m:"治愈花园",z:"独立探索"},
-{t:"深秋",a:"邓见超",m:"深夜独白",z:"华语新声"},
-{t:"阳光下的星星",a:"金海心",m:"治愈花园",z:"华语经典"},
-{t:"춥다 IT'S COLD",a:"Epik High / 李遐怡",m:"深夜独白",z:"韩系OST"},
-{t:"两人雨天",a:"宇宙人",m:"治愈花园",z:"华语新声"},
-{t:"可是你啊",a:"孟慧圆",m:"心动频率",z:"华语新声"},
-{t:"All about Anna",a:"昨夜派对",m:"心动频率",z:"华语新声"},
-{t:"词不达意",a:"林忆莲",m:"深夜独白",z:"华语抒情"},
-{t:"寂寞先生",a:"曹格",m:"深夜独白",z:"华语抒情"},
-{t:"Illusion",a:"DEN",m:"午夜幻想",z:"独立探索"},
-{t:"雨和我们拥抱在一起",a:"白色海岸",m:"治愈花园",z:"华语新声"},
-{t:"Be Be Your Love",a:"Rachael Yamagata",m:"心动频率",z:"独立探索"},
-{t:"Drive",a:"RIOPY",m:"治愈花园",z:"钢琴冥想"},
-{t:"Wyden Down",a:"RIOPY",m:"治愈花园",z:"钢琴冥想"},
-{t:"沃尔塔瓦河",a:"捷克爱乐乐团",m:"治愈花园",z:"古典跨界"},
-{t:"Lovesong",a:"Adele",m:"深夜独白",z:"欧美流行"},
-{t:"Landing Guy",a:"刘昊霖 / Kidult.",m:"治愈花园",z:"华语民谣"},
-{t:"白",a:"明天周六",m:"治愈花园",z:"华语新声"},
-{t:"A Rocket to the Moon",a:"GAVIN:D",m:"治愈花园",z:"独立探索"},
-{t:"I Don't Know You",a:"Noni",m:"独立漫游",z:"独立探索"},
-{t:"Alla ögon på mig",a:"Darin",m:"心动频率",z:"欧美流行"},
-{t:"Melody",a:"陶喆",m:"心动频率",z:"华语经典"},
-{t:"回忆的沙漏",a:"G.E.M. 邓紫棋",m:"深夜独白",z:"华语抒情"},
-{t:"怎么会忘记你",a:"王赫野 / 希林娜依高",m:"心动频率",z:"华语新声"},
-{t:"Lullaby",a:"Enzalla",m:"治愈花园",z:"独立探索"},
-{t:"passion",a:"barnes blvd.",m:"治愈花园",z:"独立探索"},
-{t:"消亡史",a:"陈婧霏",m:"午夜幻想",z:"华语新声"},
-{t:"Lie",a:"Sasha Alex Sloan",m:"深夜独白",z:"欧美流行"},
-{t:"苹果",a:"廖俊涛",m:"深夜独白",z:"华语新声"},
-{t:"失语者",a:"蔡健雅",m:"深夜独白",z:"华语抒情"},
-{t:"Month",a:"乃万",m:"独立漫游",z:"华语新声"},
-{t:"Glimpse of Us",a:"Joji",m:"深夜独白",z:"欧美流行"},
-{t:"Heaven",a:"Julia Michaels",m:"治愈花园",z:"欧美流行"},
-{t:"I'm Not The Only One",a:"Sam Smith",m:"深夜独白",z:"欧美流行"},
-{t:"原谅 I",a:"张玉华",m:"深夜独白",z:"华语抒情"},
-{t:"BABYDOLL",a:"Ari Abdul",m:"独立漫游",z:"独立探索"},
-{t:"Leave The Door Open",a:"Leroy Sanchez",m:"心动频率",z:"欧美流行"},
-{t:"주저하는 연인들을 위해",a:"JANNABI",m:"治愈花园",z:"韩系OST"},
-{t:"深蓝",a:"陈婧霏",m:"午夜幻想",z:"华语新声"},
-{t:"转身以后",a:"小男孩乐团",m:"心动频率",z:"华语新声"},
-{t:"As It Was",a:"PREP",m:"治愈花园",z:"欧美流行"},
-{t:"原谅",a:"王琪玮",m:"深夜独白",z:"华语新声"},
-{t:"瞬间",a:"G.E.M. 邓紫棋",m:"心动频率",z:"华语抒情"},
-{t:"If We Ever Broke Up",a:"Mae Stephens",m:"心动频率",z:"欧美流行"},
-{t:"Dancing With A Stranger",a:"Sam Smith / Normani",m:"心动频率",z:"欧美流行"},
-{t:"都不懂",a:"step.jad依加",m:"深夜独白",z:"华语新声"},
-{t:"Blue Jay",a:"ZUHAIR / Jah Loon",m:"治愈花园",z:"独立探索"},
-{t:"Die For You",a:"The Weeknd / Ariana Grande",m:"心动频率",z:"欧美流行"},
-{t:"Where Did U Go",a:"G.E.M. 邓紫棋",m:"深夜独白",z:"华语抒情"},
-{t:"温柔",a:"五月天 / 孙燕姿",m:"深夜独白",z:"华语经典"},
-{t:"Paris In The Rain",a:"Lauv",m:"治愈花园",z:"欧美流行"},
-{t:"ROSS AND RACHEL",a:"Jake Miller",m:"心动频率",z:"欧美流行"},
-{t:"别问很可怕",a:"J.Sheon",m:"心动频率",z:"华语新声"},
-{t:"我记得",a:"赵雷",m:"治愈花园",z:"华语民谣"},
-{t:"在你的身边",a:"盛哲",m:"治愈花园",z:"华语新声"},
-{t:"永远都会在",a:"旅行团乐队",m:"治愈花园",z:"华语新声"},
-{t:"A Thousand Years",a:"Jada Facer",m:"心动频率",z:"欧美流行"},
-{t:"7 Years",a:"Lukas Graham",m:"治愈花园",z:"欧美流行"},
-{t:"柳叶笺",a:"朱彦安 / 张诗莉",m:"治愈花园",z:"华语新声"},
-{t:"GHOST",a:"Tielle",m:"深夜独白",z:"独立探索"},
-{t:"微光",a:"袁野夕",m:"治愈花园",z:"华语新声"},
-{t:"窃笑",a:"魏如萱",m:"治愈花园",z:"华语新声"},
-{t:"路过",a:"袁野夕",m:"治愈花园",z:"华语新声"},
-{t:"数星星",a:"StrawberryPapa",m:"治愈花园",z:"华语新声"},
-{t:"青苔",a:"莫非定律乐团",m:"治愈花园",z:"华语新声"},
-{t:"Why Don't You Stay",a:"Jeff Satur",m:"心动频率",z:"欧美流行"},
-{t:"Limbs of Faith",a:"Beauvois",m:"治愈花园",z:"后摇"},
-{t:"Fly Me to the Moon",a:"The Macarons Project",m:"心动频率",z:"经典爵士"},
-{t:"Ferrari",a:"Bebe Rexha",m:"心动频率",z:"欧美流行"},
-{t:"喜欢",a:"李大奔",m:"心动频率",z:"华语新声"},
-{t:"安静的你",a:"Kirsty刘瑾睿",m:"治愈花园",z:"华语新声"},
-{t:"Wildest Dreams",a:"Anthem Lights",m:"午夜幻想",z:"欧美流行"},
-{t:"Afterglow",a:"Leroy Sanchez",m:"治愈花园",z:"欧美流行"},
-{t:"Like a Song",a:"Anthony Lazaro",m:"治愈花园",z:"独立探索"},
-{t:"Nice to Meet You",a:"AMnesiac安尼西亚",m:"治愈花园",z:"华语新声"},
-{t:"Fade",a:"Jeff Satur",m:"治愈花园",z:"欧美流行"},
-{t:"Green Book",a:"Ghostly Kisses",m:"治愈花园",z:"梦幻流行"},
-{t:"Bloody Mary Girl",a:"She Her Her Hers",m:"独立漫游",z:"日系治愈"},
-{t:"成都",a:"赵雷",m:"治愈花园",z:"华语民谣"},
-{t:"Dancing with my phone",a:"HYBS",m:"治愈花园",z:"独立探索"},
-{t:"霍乱时期的爱情",a:"向日葵乐队",m:"深夜独白",z:"华语新声"},
-{t:"彗星",a:"白鲨JAWS",m:"心动频率",z:"华语新声"},
-{t:"新的心跳",a:"G.E.M. 邓紫棋",m:"心动频率",z:"华语抒情"},
-{t:"后来的我们",a:"五月天",m:"深夜独白",z:"华语经典"},
-{t:"后会无期",a:"G.E.M. 邓紫棋",m:"深夜独白",z:"华语抒情"},
-{t:"仰望星空",a:"张杰",m:"治愈花园",z:"华语经典"},
-{t:"夏夜芦苇",a:"NoSleep Child",m:"治愈花园",z:"华语新声"},
-{t:"囹圄",a:"姜没",m:"深夜独白",z:"华语新声"},
-{t:"几分之几",a:"卢广仲",m:"治愈花园",z:"华语民谣"},
-{t:"兜转",a:"陈势安",m:"深夜独白",z:"华语抒情"},
-{t:"苦橙",a:"RAiNBOW计划 / 林力尧",m:"治愈花园",z:"华语新声"},
-{t:"无话可说",a:"张洢豪",m:"深夜独白",z:"华语新声"},
-{t:"多远都要在一起",a:"G.E.M. 邓紫棋",m:"心动频率",z:"华语抒情"},
-{t:"你啊你啊",a:"魏如萱",m:"治愈花园",z:"华语新声"},
-{t:"先说谎的人",a:"h3R3 / 张鑫",m:"深夜独白",z:"华语新声"},
-{t:"不要想太多",a:"郭顶",m:"治愈花园",z:"华语新声"},
-{t:"Home",a:"Peder Elias",m:"治愈花园",z:"欧美流行"},
-{t:"Darkness around",a:"Jonas David",m:"深夜独白",z:"独立探索"},
-{t:"Growing Pains",a:"Nathan Trent",m:"治愈花园",z:"欧美流行"},
-{t:"可是爱最为致命",a:"莫非定律乐团",m:"深夜独白",z:"华语新声"},
-{t:"太空",a:"吴青峰",m:"午夜幻想",z:"华语经典"},
-{t:"飞鸟",a:"枯木逢春 / 尚士达",m:"治愈花园",z:"华语民谣"},
-{t:"你是秋天晚上的月亮",a:"周三七",m:"治愈花园",z:"华语新声"},
-{t:"当我望着你",a:"鹿洐人",m:"心动频率",z:"华语新声"},
-{t:"好不容易",a:"告五人",m:"心动频率",z:"华语新声"},
-{t:"What If I Wasn't Done Loving You?",a:"Fly By Midnight",m:"心动频率",z:"欧美流行"},
-{t:"你瞒我瞒",a:"陈柏宇",m:"深夜独白",z:"粤语世界"},
-{t:"旅行中忘记",a:"蔻晴",m:"深夜独白",z:"华语新声"},
-{t:"麻醉师",a:"胡睿",m:"深夜独白",z:"华语新声"},
-{t:"玫瑰少年",a:"五月天",m:"心动频率",z:"华语经典"},
-{t:"Strawberries & Cigarettes",a:"Troye Sivan",m:"治愈花园",z:"欧美流行"},
-{t:"谁",a:"廖俊涛",m:"深夜独白",z:"华语新声"},
-{t:"云泥",a:"贺子轩",m:"深夜独白",z:"华语新声"},
-{t:"同花顺",a:"林倛玉",m:"深夜独白",z:"华语抒情"},
-{t:"デート",a:"RADWIMPS",m:"心动频率",z:"日系治愈"},
-{t:"刻在我心底的名字",a:"卢广仲",m:"深夜独白",z:"华语民谣"},
-{t:"你幸福吗？",a:"胡鸿钧",m:"深夜独白",z:"粤语世界"},
-{t:"Shangri-La Is Calling",a:"椅子乐团",m:"治愈花园",z:"华语新声"},
-{t:"后来的灯火",a:"醒山",m:"独立漫游",z:"华语新声"},
-{t:"再见迪曼",a:"马良",m:"深夜独白",z:"华语民谣"},
-{t:"就让我坠入海底",a:"Sunken Boat沉舟乐队",m:"深夜独白",z:"华语新声"},
-{t:"向告别飞驰吧",a:"昨夜派对",m:"独立漫游",z:"华语新声"},
-{t:"California",a:"Ridgely",m:"治愈花园",z:"欧美流行"},
-{t:"走入有雾的森林",a:"Cicada",m:"治愈花园",z:"后摇"},
-{t:"华年",a:"鹿先森乐队",m:"治愈花园",z:"华语民谣"},
-{t:"Magnolia",a:"Nyah Grace",m:"治愈花园",z:"欧美流行"},
-{t:"Villanelle",a:"Jo Blankenburg",m:"治愈花园",z:"钢琴冥想"},
-{t:"Paul",a:"Cavetown",m:"治愈花园",z:"独立探索"},
-{t:"约会在星期天晚上",a:"莫非定律乐团",m:"心动频率",z:"华语新声"},
-{t:"晚风",a:"陈婧霏",m:"治愈花园",z:"华语新声"},
-{t:"Mia Hates Jazz",a:"Justin Hurwitz",m:"午夜幻想",z:"电影原声"},
-{t:"City Of Stars (Humming)",a:"Justin Hurwitz",m:"午夜幻想",z:"电影原声"},
-{t:"Yellow",a:"Coldplay",m:"治愈花园",z:"欧美摇滚"},
-{t:"我是如此相信",a:"周杰伦",m:"治愈花园",z:"华语经典"},
-{t:"You Are Not Alone",a:"Michael Jackson",m:"治愈花园",z:"欧美经典"},
-{t:"追风",a:"郭一凡",m:"治愈花园",z:"华语新声"},
-{t:"有我呢",a:"郭一凡",m:"治愈花园",z:"华语新声"},
-{t:"这世界那么多人",a:"莫文蔚",m:"深夜独白",z:"华语抒情"},
-{t:"The Reason",a:"Hoobastank",m:"治愈花园",z:"欧美摇滚"},
-{t:"桥豆麻袋",a:"陈粒",m:"治愈花园",z:"华语民谣"},
-{t:"Dear Mary",a:"悶餅MOONBAND",m:"心动频率",z:"华语新声"},
-{t:"晴天",a:"周杰伦",m:"心动频率",z:"华语经典"},
-{t:"野子",a:"苏运莹",m:"心动频率",z:"华语新声"},
-{t:"房间",a:"刘瑞琦",m:"治愈花园",z:"华语新声"},
-{t:"起风了",a:"周深",m:"治愈花园",z:"华语新声"},
-{t:"Careless Whisper",a:"Sam Levine",m:"治愈花园",z:"经典爵士"},
-{t:"Easily",a:"Bruno Major",m:"心动频率",z:"欧美流行"},
-{t:"Falling Slowly",a:"Glen Hansard",m:"深夜独白",z:"电影原声"},
-{t:"再谈记忆",a:"盘尼西林乐队",m:"心动频率",z:"华语新声"},
-{t:"Shape Of My Heart",a:"Sting",m:"治愈花园",z:"欧美经典"},
-{t:"白玫瑰",a:"陈奕迅",m:"深夜独白",z:"粤语世界"},
-{t:"走马",a:"陈粒",m:"治愈花园",z:"华语民谣"},
-{t:"绝对占有 相对自由",a:"陈粒",m:"独立漫游",z:"华语民谣"},
-{t:"明年今日",a:"陈奕迅",m:"深夜独白",z:"粤语世界"},
-{t:"Dancing With Your Ghost",a:"Sasha Alex Sloan",m:"深夜独白",z:"欧美流行"},
-{t:"纯洁2016",a:"木马",m:"独立漫游",z:"华语新声"},
-{t:"Gravity",a:"郑成河",m:"治愈花园",z:"钢琴冥想"},
-{t:"All in a Daydream",a:"Snigellin",m:"治愈花园",z:"独立探索"},
-{t:"富士山下",a:"陈奕迅",m:"深夜独白",z:"粤语世界"},
-{t:"我好想你",a:"苏打绿",m:"深夜独白",z:"华语经典"},
-{t:"二人の帰り道",a:"GIN",m:"治愈花园",z:"日系治愈"},
-{t:"Monsters",a:"Katie Sky",m:"午夜幻想",z:"欧美流行"},
-{t:"Ascent",a:"Peter Kater",m:"治愈花园",z:"钢琴冥想"},
-{t:"恋をしたのは",a:"aiko",m:"心动频率",z:"日系治愈"},
-{t:"一路向北",a:"周杰伦",m:"深夜独白",z:"华语经典"},
-{t:"夏バテ",a:"aiko",m:"治愈花园",z:"日系治愈"},
-{t:"夢灯籠",a:"RADWIMPS",m:"午夜幻想",z:"日系治愈"},
-{t:"Forever Friends",a:"Daoko",m:"心动频率",z:"日系治愈"},
-{t:"不潮不用花钱",a:"林俊杰",m:"心动频率",z:"华语抒情"},
-{t:"水星记",a:"郭顶",m:"深夜独白",z:"华语新声"},
-{t:"不要说话",a:"陈奕迅",m:"深夜独白",z:"粤语世界"},
-{t:"保留",a:"郭顶",m:"治愈花园",z:"华语新声"},
-{t:"从你的全世界路过",a:"UlyseL",m:"治愈花园",z:"独立探索"},
-{t:"Take Me Hand",a:"DAISHI DANCE",m:"治愈花园",z:"日系治愈"},
-{t:"献给爱丽丝",a:"Richard Clayderman",m:"治愈花园",z:"古典跨界"},
-{t:"海底",a:"袁子希",m:"深夜独白",z:"华语新声"},
-{t:"盛夏的舞",a:"Heyo / 卫诗",m:"心动频率",z:"粤语世界"},
-{t:"爱与诚",a:"古巨基",m:"深夜独白",z:"粤语世界"},
-{t:"爱，存在",a:"王靖雯",m:"心动频率",z:"华语新声"},
-{t:"Hotel California",a:"Eagles",m:"独立漫游",z:"欧美摇滚"},
-{t:"風の住む街",a:"矶村由纪子",m:"治愈花园",z:"日系治愈"},
-{t:"死在旋转公寓",a:"发光曲线",m:"独立漫游",z:"华语新声"},
-{t:"小情歌",a:"苏打绿",m:"心动频率",z:"华语经典"},
-{t:"春天交响曲",a:"苏慧伦",m:"治愈花园",z:"华语经典"},
-{t:"甜甜的",a:"周杰伦",m:"心动频率",z:"华语经典"},
-{t:"月のナミダ",a:"押尾光太郎",m:"治愈花园",z:"日系治愈"},
-{t:"Summer",a:"久石让",m:"治愈花园",z:"钢琴冥想"},
-{t:"スパークル",a:"RADWIMPS",m:"午夜幻想",z:"日系治愈"},
-{t:"Fish In The Pool",a:"岩井俊二",m:"治愈花园",z:"日系治愈"},
-{t:"三葉のテーマ",a:"RADWIMPS",m:"午夜幻想",z:"日系治愈"},
-{t:"コネクト",a:"触手猴",m:"治愈花园",z:"钢琴冥想"},
-{t:"Cry for the moon",a:"出羽良彰",m:"治愈花园",z:"日系治愈"},
-{t:"なんでもないや",a:"RADWIMPS",m:"治愈花园",z:"日系治愈"},
-{t:"もののけ姫",a:"日本群星",m:"治愈花园",z:"日系治愈"},
-{t:"瑠璃色の地球",a:"手嶌葵",m:"治愈花园",z:"日系治愈"},
-{t:"Kan Inte Saga Nej",a:"Veronica Maggio",m:"治愈花园",z:"独立探索"},
-{t:"光",a:"陈粒",m:"治愈花园",z:"华语民谣"},
-{t:"开往春天的地铁",a:"方便便",m:"治愈花园",z:"华语新声"},
-{t:"Lonely Day",a:"Jurrivh",m:"深夜独白",z:"独立探索"},
-{t:"城南花已开",a:"三亩地",m:"治愈花园",z:"钢琴冥想"},
-{t:"IF YOU",a:"BIGBANG",m:"深夜独白",z:"K-Pop"},
-{t:"Rain after Summer",a:"羽肿",m:"治愈花园",z:"独立探索"},
-{t:"月半小夜曲",a:"李克勤",m:"治愈花园",z:"粤语世界"},
-{t:"告白之夜",a:"小蓝帽",m:"午夜幻想",z:"日系治愈"},
-{t:"月光曲",a:"Classical Artists",m:"治愈花园",z:"古典跨界"},
-{t:"LA VIE EN ROSE",a:"小野丽莎",m:"治愈花园",z:"日系治愈"},
-{t:"虚拟",a:"陈粒",m:"治愈花园",z:"华语民谣"},
-{t:"青石巷",a:"魏琮霏",m:"治愈花园",z:"华语民谣"},
-{t:"Something In The Rain",a:"Rachael Yamagata",m:"治愈花园",z:"独立探索"},
-{t:"记得",a:"林俊杰",m:"深夜独白",z:"华语抒情"},
-{t:"她说",a:"林俊杰",m:"深夜独白",z:"华语抒情"},
-{t:"夜空中最亮的星",a:"逃跑计划",m:"治愈花园",z:"华语新声"},
-{t:"芳草地",a:"陈粒",m:"治愈花园",z:"华语民谣"},
-{t:"Down",a:"Marian Hill",m:"治愈花园",z:"欧美流行"},
-{t:"小半",a:"陈粒",m:"治愈花园",z:"华语民谣"},
-{t:"This Love",a:"Maroon 5",m:"心动频率",z:"欧美流行"},
-{t:"The Destruction of Laputa",a:"久石让",m:"治愈花园",z:"钢琴冥想"},
-{t:"醉赤壁",a:"林俊杰",m:"治愈花园",z:"华语抒情"},
-{t:"模特",a:"李荣浩",m:"治愈花园",z:"华语抒情"},
-{t:"繋ぎとめた世界",a:"帆足圭吾",m:"治愈花园",z:"日系治愈"},
-{t:"いのちの名前",a:"广桥真纪子",m:"治愈花园",z:"日系治愈"},
-{t:"幻昼",a:"MayPiano",m:"治愈花园",z:"钢琴冥想"},
-{t:"Flower",a:"恶梦Yk / 大喜",m:"治愈花园",z:"独立探索"},
-{t:"Lemon",a:"米津玄師",m:"治愈花园",z:"日系治愈"},
-{t:"浪费",a:"林宥嘉 / 郁可唯",m:"深夜独白",z:"华语抒情"},
-{t:"心做し",a:"majiko",m:"深夜独白",z:"日系治愈"},
-{t:"白雪",a:"KOKIA",m:"治愈花园",z:"日系治愈"},
-{t:"核：冬夜的第一支歌",a:"昨夜派对",m:"治愈花园",z:"华语新声"},
-{t:"In the Mood for Love",a:"梅林茂",m:"午夜幻想",z:"钢琴冥想"},
-{t:"Kirameki",a:"RADWIMPS",m:"午夜幻想",z:"日系治愈"},
-{t:"Nandemonaiya",a:"RADWIMPS",m:"治愈花园",z:"日系治愈"},
-{t:"Is There Still Anything That Love Can Do",a:"RADWIMPS",m:"午夜幻想",z:"日系治愈"},
+{t:"我看着你的时候",a:"李荣浩",m:"深夜独白",z:"华语抒情",id:506092654},
+{t:"如果可以",a:"韦礼安",m:"深夜独白",z:"华语抒情",id:1890530891},
+{t:"20 Questions",a:"磊落 / 阿尔达克",m:"独立漫游",z:"独立探索",id:2026617563},
+{t:"宿醉之星",a:"琥珀乐队",m:"独立漫游",z:"独立探索",id:29600656},
+{t:"雪人",a:"驼儿",m:"深夜独白",z:"华语新声",id:2685515657},
+{t:"Would You Fall in Love with Me Again",a:"Jorge Rivera-Herrans",m:"午夜幻想",z:"百老汇之夜",id:2657213654},
+{t:"Puppeteer",a:"Jorge Rivera-Herrans",m:"午夜幻想",z:"百老汇之夜",id:2123984509},
+{t:"common love",a:"驼儿 / 说唱者联盟",m:"深夜独白",z:"华语新声",id:1461232821},
+{t:"在日落前拥抱",a:"尕尔东",m:"深夜独白",z:"华语新声",id:1959037325},
+{t:"Listen",a:"Beyoncé",m:"心动频率",z:"欧美流行",id:2188846},
+{t:"Straight to the Soul",a:"Ironwood Union",m:"治愈花园",z:"独立探索",id:3312789041},
+{t:"blue (with MINNIE)",a:"yung kai / MINNIE",m:"治愈花园",z:"欧美流行",id:2611181089},
+{t:"我想和你一起",a:"温蒂漫步",m:"治愈花园",z:"独立探索",id:2084394983},
+{t:"误把栾花当桂花",a:"YN-K",m:"治愈花园",z:"华语新声",id:3362626475},
+{t:"可风",a:"黄建为",m:"治愈花园",z:"华语民谣",id:92557},
+{t:"圈套",a:"Fine乐团",m:"心动频率",z:"华语新声",id:1405853776},
+{t:"喜欢",a:"张悬",m:"治愈花园",z:"华语民谣",id:326719},
+{t:"我发现你",a:"Fine乐团",m:"心动频率",z:"华语新声",id:35678873},
+{t:"听见下雨的声音",a:"魏如昀",m:"深夜独白",z:"华语抒情",id:31877644},
+{t:"SORRY",a:"比莉",m:"深夜独白",z:"华语经典",id:null},
+{t:"还是会想你",a:"Fine乐团",m:"深夜独白",z:"华语新声",id:416966331},
+{t:"How Long, How Low?",a:"Chance Peña / Hayd",m:"治愈花园",z:"欧美流行",id:2698851599},
+{t:"夏夜露天电影",a:"白色海岸",m:"治愈花园",z:"华语新声",id:null},
+{t:"歩いても 歩いても",a:"GONTITI",m:"治愈花园",z:"日系治愈",id:757761},
+{t:"Ladyfingers",a:"Ryan Gebhardt",m:"治愈花园",z:"独立探索",id:1419321891},
+{t:"disintegrate",a:"KMurdock Music Group",m:"独立漫游",z:"独立探索",id:2718883546},
+{t:"This isn't what I planned",a:"virgin cigarettes",m:"独立漫游",z:"独立探索",id:2714186915},
+{t:"You & I",a:"Avant",m:"心动频率",z:"R&B灵魂",id:1479402705},
+{t:"呼吸决定",a:"Fine乐团",m:"心动频率",z:"华语新声",id:35678875},
+{t:"One Wish",a:"Ray J",m:"心动频率",z:"R&B灵魂",id:null},
+{t:"Oh Honey",a:"Delegation",m:"心动频率",z:"R&B灵魂",id:1401229904},
+{t:"再次爱上你",a:"阿里郎",m:"深夜独白",z:"华语经典",id:1936095074},
+{t:"拆穿",a:"黄绮珊",m:"深夜独白",z:"华语抒情",id:431259511},
+{t:"Gas Station Diner",a:"AGA",m:"治愈花园",z:"粤语世界",id:2674229292},
+{t:"Pap",a:"Kidult.",m:"独立漫游",z:"独立探索",id:422428548},
+{t:"Give It Up",a:"黄玠玮",m:"治愈花园",z:"华语新声",id:1929262945},
+{t:"June & August",a:"GONTITI",m:"治愈花园",z:"日系治愈",id:null},
+{t:"Nobody",a:"Charlie Jeer",m:"独立漫游",z:"独立探索",id:22813728},
+{t:"Laundromat",a:"Nivea",m:"心动频率",z:"R&B灵魂",id:3169816},
+{t:"I Miss You",a:"ROCOBERRY",m:"深夜独白",z:"韩系OST",id:533403084},
+{t:"甜蜜的麻烦",a:"OK绷",m:"治愈花园",z:"华语新声",id:1919324657},
+{t:"There Goes My Baby",a:"d4vd",m:"深夜独白",z:"欧美流行",id:2607219224},
+{t:"Way Back Into Love",a:"Hugh Grant / Drew Barrymore",m:"心动频率",z:"电影原声",id:1859330081},
+{t:"One Of The Girls",a:"The Weeknd / JENNIE",m:"心动频率",z:"欧美流行",id:2058139099},
+{t:"Just the Way You Are",a:"Bruno Mars",m:"心动频率",z:"欧美流行",id:25657276},
+{t:"嘲笑",a:"Fine乐团",m:"深夜独白",z:"华语新声",id:1874421248},
+{t:"Save Your Tears",a:"The Weeknd / Ariana Grande",m:"心动频率",z:"欧美流行",id:1432456852},
+{t:"34+35",a:"Ariana Grande",m:"心动频率",z:"欧美流行",id:1490999365},
+{t:"Soft Lips",a:"BlankCh3ck",m:"治愈花园",z:"独立探索",id:1490987790},
+{t:"Bleeding Love",a:"Ni/Co",m:"深夜独白",z:"欧美流行",id:1388433823},
+{t:"Next To You",a:"Charlotte Cardin",m:"治愈花园",z:"欧美流行",id:2075913603},
+{t:"Peaches",a:"Justin Bieber / Daniel Caesar",m:"治愈花园",z:"欧美流行",id:1830419924},
+{t:"爱你没差",a:"周杰伦",m:"深夜独白",z:"华语经典",id:3335549511},
+{t:"等你下课",a:"周杰伦 / 杨瑞代",m:"心动频率",z:"华语经典",id:2723459463},
+{t:"学不会",a:"林俊杰",m:"深夜独白",z:"华语抒情",id:108134},
+{t:"不该",a:"周杰伦 / 张惠妹",m:"深夜独白",z:"华语经典",id:3373320324},
+{t:"Shut up My Moms Calling",a:"Hotel Ugly",m:"独立漫游",z:"独立探索",id:1980855568},
+{t:"One More Light",a:"Linkin Park",m:"深夜独白",z:"欧美摇滚",id:460043753},
+{t:"Snow Of Fate",a:"米卡",m:"治愈花园",z:"华语新声",id:null},
+{t:"初恋旧爱新欢",a:"RAiNBOW计划 / 林力尧",m:"心动频率",z:"华语新声",id:30284674},
+{t:"DREAM",a:"BABYMONSTER",m:"心动频率",z:"K-Pop",id:2141179254},
+{t:"I Love You 3000",a:"해리안 윤소안",m:"心动频率",z:"韩系OST",id:1374446646},
+{t:"time machine",a:"mj apanay / aren park",m:"治愈花园",z:"独立探索",id:1379918404},
+{t:"Sweet",a:"Cigarettes After Sex",m:"治愈花园",z:"梦幻流行",id:1307776321},
+{t:"Deadman",a:"蔡徐坤",m:"独立漫游",z:"华语新声",id:2708984802},
+{t:"Come Around Me",a:"Justin Bieber",m:"治愈花园",z:"欧美流行",id:1420972635},
+{t:"Julie.",a:"Gallant",m:"治愈花园",z:"R&B灵魂",id:1820040979},
+{t:"City Of Stars",a:"Ryan Gosling / Emma Stone",m:"午夜幻想",z:"电影原声",id:421203025},
+{t:"矜持",a:"王菲",m:"深夜独白",z:"华语经典",id:300129},
+{t:"All I Wanna Do",a:"Kim Waters",m:"治愈花园",z:"R&B灵魂",id:19033312},
+{t:"nightfall",a:"aren park",m:"深夜独白",z:"独立探索",id:2010499842},
+{t:"warm",a:"Ariana Grande",m:"治愈花园",z:"欧美流行",id:null},
+{t:"watch you sleep.",a:"girl in red",m:"深夜独白",z:"独立探索",id:1384019317},
+{t:"Open Hearts",a:"HAEVN / Birdy",m:"治愈花园",z:"欧美流行",id:1903160949},
+{t:"好好说再见",a:"陶喆 / 关诗敏",m:"深夜独白",z:"华语抒情",id:26425118},
+{t:"twilight zone",a:"Ariana Grande",m:"午夜幻想",z:"欧美流行",id:2689018742},
+{t:"过",a:"王嘉尔 / 林俊杰",m:"深夜独白",z:"华语新声",id:1804879213},
+{t:"I Love You So",a:"The Walters",m:"心动频率",z:"欧美流行",id:1294899297},
+{t:"笨蛋，混蛋",a:"陆虎 / 何洁",m:"心动频率",z:"华语新声",id:1293905737},
+{t:"梦中人",a:"亚森",m:"午夜幻想",z:"华语新声",id:2635899541},
+{t:"We Could Still Be Happy",a:"Rachael Yamagata",m:"治愈花园",z:"独立探索",id:1372791850},
+{t:"The Moon Song",a:"Scarlett Johansson",m:"治愈花园",z:"电影原声",id:28254854},
+{t:"Comfortable",a:"Victor Ray",m:"治愈花园",z:"R&B灵魂",id:2116039946},
+{t:"秘闻",a:"黄誉博",m:"深夜独白",z:"华语新声",id:2083463774},
+{t:"躲雨",a:"Sophis",m:"治愈花园",z:"独立探索",id:2111475956},
+{t:"去看星星好不好",a:"陈翌朦",m:"治愈花园",z:"华语新声",id:1306248414},
+{t:"魔方",a:"Milie",m:"治愈花园",z:"独立探索",id:2029931308},
+{t:"梦话",a:"王子为",m:"深夜独白",z:"华语新声",id:2046873266},
+{t:"拆穿",a:"小霞",m:"深夜独白",z:"华语抒情",id:399343373},
+{t:"唯一",a:"告五人",m:"心动频率",z:"华语新声",id:1807799505},
+{t:"はんなり",a:"ko-ko-ya",m:"治愈花园",z:"日系治愈",id:768727},
+{t:"太聪明",a:"陈绮贞",m:"深夜独白",z:"华语民谣",id:209397},
+{t:"果蝇与放坏的西柚",a:"陈越龙",m:"独立漫游",z:"华语新声",id:2025141417},
+{t:"Last Days",a:"吉田靖",m:"治愈花园",z:"日系治愈",id:439911467},
+{t:"一格格",a:"卫兰",m:"心动频率",z:"粤语世界",id:475277350},
+{t:"浴室",a:"旺仔加真露",m:"独立漫游",z:"华语新声",id:1393399161},
+{t:"刻在我心底的名字",a:"JulianZheng",m:"深夜独白",z:"华语抒情",id:1857997070},
+{t:"圣诞结",a:"陈奕迅",m:"深夜独白",z:"粤语世界",id:65355},
+{t:"River Flows In You",a:"纯音乐",m:"治愈花园",z:"钢琴冥想",id:20110049},
+{t:"剪爱",a:"关喆",m:"深夜独白",z:"华语抒情",id:88926},
+{t:"III",a:"Athletics",m:"治愈花园",z:"后摇",id:3947467},
+{t:"梦伴",a:"李悦君",m:"深夜独白",z:"粤语世界",id:2688449489},
+{t:"Begging You",a:"2LSON / 孝彬",m:"心动频率",z:"韩系OST",id:26330903},
+{t:"Satisfied",a:"Renee Elise Goldsberry",m:"午夜幻想",z:"百老汇之夜",id:35804609},
+{t:"Blah Blah Blah",a:"Lukie.Y",m:"独立漫游",z:"独立探索",id:null},
+{t:"Hang on Little Tomato",a:"Pink Martini",m:"治愈花园",z:"经典爵士",id:18212778},
+{t:"missing you",a:"Sevn Dayz",m:"深夜独白",z:"独立探索",id:2083662257},
+{t:"If I Ain't Got You",a:"Brandon Victor Dixon",m:"深夜独白",z:"R&B灵魂",id:2704586112},
+{t:"Hideaway",a:"Cigarettes After Sex",m:"治愈花园",z:"梦幻流行",id:2152138295},
+{t:"和你",a:"余佳运",m:"心动频率",z:"华语新声",id:420401511},
+{t:"当两颗心",a:"罗森涛",m:"心动频率",z:"华语新声",id:2611412636},
+{t:"迷雾女士",a:"杨楚骁",m:"午夜幻想",z:"华语新声",id:1856385948},
+{t:"小孩",a:"罗森涛",m:"深夜独白",z:"华语新声",id:2166584564},
+{t:"我最喜欢冷天气",a:"DeeZoo",m:"治愈花园",z:"华语新声",id:2122976910},
+{t:"a song for love",a:"春畑道哉",m:"治愈花园",z:"日系治愈",id:22653254},
+{t:"江湖",a:"鲸鱼马戏团",m:"治愈花园",z:"后摇",id:1422996093},
+{t:"凉夜窗情",a:"小虫",m:"深夜独白",z:"华语经典",id:170106},
+{t:"Billie Jean",a:"青山黛玛",m:"心动频率",z:"日系治愈",id:27580634},
+{t:"恢弘的大梦",a:"鲸鱼马戏团",m:"治愈花园",z:"后摇",id:null},
+{t:"Deep Green",a:"Christian Kuria",m:"治愈花园",z:"独立探索",id:1403232024},
+{t:"晚安",a:"鹿先森乐队",m:"治愈花园",z:"华语民谣",id:1359356908},
+{t:"荒漠上行走",a:"亚森",m:"独立漫游",z:"华语新声",id:2041212293},
+{t:"春日小径花园",a:"Furyl",m:"治愈花园",z:"独立探索",id:2145039557},
+{t:"I Wish",a:"Faime",m:"治愈花园",z:"独立探索",id:1449808276},
+{t:"进入你梦里",a:"银河快递",m:"午夜幻想",z:"华语新声",id:2082354126},
+{t:"不会太难",a:"丁祾",m:"深夜独白",z:"华语新声",id:1335537005},
+{t:"Falling In Love",a:"Cigarettes After Sex",m:"治愈花园",z:"梦幻流行",id:2130045061},
+{t:"为何离开",a:"罗森涛",m:"深夜独白",z:"华语新声",id:2166584563},
+{t:"Dehors",a:"Jordann",m:"治愈花园",z:"独立探索",id:1815725297},
+{t:"轻不着地",a:"before the night ends",m:"治愈花园",z:"华语新声",id:2731259985},
+{t:"山路",a:"怪豆儿 / 李璟崎",m:"治愈花园",z:"华语新声",id:2109986850},
+{t:"五官",a:"闫泽欢",m:"独立漫游",z:"华语新声",id:1875242298},
+{t:"Pines",a:"Men I Trust",m:"治愈花园",z:"梦幻流行",id:1391251164},
+{t:"污水塘",a:"惘闻",m:"独立漫游",z:"后摇",id:385360},
+{t:"pine cone",a:"金車厘子",m:"治愈花园",z:"华语新声",id:1909454407},
+{t:"Doin Nothing",a:"Seth Liane",m:"治愈花园",z:"独立探索",id:2008518585},
+{t:"Just Take Me in Your Arms",a:"Alfonso De Vilallonga",m:"治愈花园",z:"独立探索",id:1296238727},
+{t:"Defrosting Song",a:"Alfonso De Vilallonga",m:"治愈花园",z:"独立探索",id:2110560523},
+{t:"Let's Get The Mood Right",a:"Johnny Gill",m:"心动频率",z:"R&B灵魂",id:18551521},
+{t:"Fallin' Out",a:"Keyshia Cole",m:"深夜独白",z:"R&B灵魂",id:1616018},
+{t:"渐近自由",a:"熊猫堂",m:"心动频率",z:"华语新声",id:2063173321},
+{t:"Tejano Blue",a:"Cigarettes After Sex",m:"治愈花园",z:"梦幻流行",id:2606516976},
+{t:"Thirsty",a:"Geoffroy / Men I Trust",m:"治愈花园",z:"梦幻流行",id:2045929603},
+{t:"Hush",a:"The Marías",m:"治愈花园",z:"独立探索",id:1840490719},
+{t:"Done for Me",a:"Charlie Puth / Kehlani",m:"心动频率",z:"欧美流行",id:544199008},
+{t:"低度酒摄入陷阱",a:"猫仙人",m:"独立漫游",z:"华语新声",id:1831779239},
+{t:"Shadow Room",a:"Brian Cheng",m:"独立漫游",z:"华语新声",id:2111811043},
+{t:"Always",a:"Daniel Caesar",m:"治愈花园",z:"R&B灵魂",id:2037034388},
+{t:"Cruisin'",a:"Sioen",m:"治愈花园",z:"独立探索",id:19078759},
+{t:"Not My Neighbour",a:"Niko Walters",m:"治愈花园",z:"独立探索",id:1837589349},
+{t:"黑色静态",a:"杨瑞代 / Lara梁心颐",m:"午夜幻想",z:"华语新声",id:32358372},
+{t:"月光",a:"杨瑞代 / 周杰伦",m:"深夜独白",z:"华语经典",id:3950050},
+{t:"Freezing",a:"syd B",m:"深夜独白",z:"独立探索",id:1824846582},
+{t:"Annie's Vision",a:"Green Pitch",m:"治愈花园",z:"独立探索",id:18030060},
+{t:"Wake Up Call",a:"Mel Blue",m:"独立漫游",z:"独立探索",id:1817136575},
+{t:"漫步香港1999",a:"白浩贤",m:"治愈花园",z:"粤语世界",id:null},
+{t:"Worship",a:"Ari Abdul",m:"独立漫游",z:"独立探索",id:2056089290},
+{t:"the boy is mine",a:"Brown Eyed Girl",m:"心动频率",z:"K-Pop",id:16772993},
+{t:"Whiskey and Morphine",a:"Alexander Jean",m:"深夜独白",z:"独立探索",id:416700932},
+{t:"Wish",a:"魏诗莹",m:"治愈花园",z:"华语新声",id:1330574154},
+{t:"Doors",a:"Us The Duo",m:"心动频率",z:"欧美流行",id:1824770063},
+{t:"游荡的人",a:"好乐团 / 李玖哲",m:"独立漫游",z:"华语新声",id:1992746370},
+{t:"4ever",a:"Elhé / gabby parafina",m:"治愈花园",z:"独立探索",id:2060387027},
+{t:"different",a:"leejean",m:"独立漫游",z:"华语新声",id:2088813190},
+{t:"Earned It",a:"The Weeknd",m:"心动频率",z:"欧美流行",id:null},
+{t:"Set for Life",a:"Trent Dabbs",m:"治愈花园",z:"独立探索",id:1446788784},
+{t:"Too Sweet",a:"Hozier",m:"治愈花园",z:"欧美流行",id:2138002739},
+{t:"vampire",a:"Olivia Rodrigo",m:"独立漫游",z:"欧美流行",id:3370511577},
+{t:"Float",a:"Olivia Dean",m:"治愈花园",z:"欧美流行",id:1865081647},
+{t:"Delectable",a:"Lindsxy Mesenburg",m:"治愈花园",z:"独立探索",id:1842573542},
+{t:"虹",a:"Brian Cheng",m:"独立漫游",z:"华语新声",id:2030240458},
+{t:"Mushroom",a:"Brian Cheng",m:"独立漫游",z:"华语新声",id:2072279422},
+{t:"聪明不聪明",a:"丁世光",m:"心动频率",z:"华语新声",id:524148351},
+{t:"Waiting Is A Waste",a:"Mina Okabe",m:"治愈花园",z:"独立探索",id:1958638441},
+{t:"小师妹",a:"丁世光",m:"心动频率",z:"华语新声",id:524149365},
+{t:"Rain Watcher",a:"惘闻",m:"治愈花园",z:"后摇",id:385320},
+{t:"Van Gogh",a:"Virginio Aiello",m:"治愈花园",z:"钢琴冥想",id:2085168031},
+{t:"her shadow",a:"Thomas Ng",m:"深夜独白",z:"独立探索",id:1837903505},
+{t:"I'm Not a Gentleman",a:"杨瑞代",m:"独立漫游",z:"华语新声",id:1815713410},
+{t:"One Last Dance",a:"Us The Duo",m:"心动频率",z:"欧美流行",id:553904673},
+{t:"Lonely God",a:"惘闻",m:"独立漫游",z:"后摇",id:385322},
+{t:"散步",a:"张荣昊",m:"治愈花园",z:"华语新声",id:2756836726},
+{t:"Rest Assured",a:"Jeff Bernat",m:"治愈花园",z:"R&B灵魂",id:1940134778},
+{t:"我在等你按下播放键",a:"莫非定律乐团",m:"深夜独白",z:"华语新声",id:1993425453},
+{t:"打上花火",a:"Daoko / 米津玄師",m:"午夜幻想",z:"日系治愈",id:1332889917},
+{t:"Simon",a:"丁世光",m:"心动频率",z:"华语新声",id:524152312},
+{t:"Costa da Caparica",a:"RIOPY",m:"治愈花园",z:"钢琴冥想",id:2038412572},
+{t:"Duet",a:"Rachael Yamagata",m:"心动频率",z:"独立探索",id:18733268},
+{t:"Puppy",a:"Charlotte Cardin",m:"心动频率",z:"欧美流行",id:2075914369},
+{t:"台北车站",a:"飞石号",m:"治愈花园",z:"华语新声",id:1334264543},
+{t:"心慌",a:"邓见超",m:"心动频率",z:"华语新声",id:1908002466},
+{t:"Language",a:"Fintan",m:"治愈花园",z:"独立探索",id:1455072659},
+{t:"Happy Valentine",a:"曹格",m:"心动频率",z:"华语抒情",id:3349920080},
+{t:"Daisy",a:"Perry Pluto",m:"治愈花园",z:"独立探索",id:1449399991},
+{t:"深秋",a:"邓见超",m:"深夜独白",z:"华语新声",id:1491150783},
+{t:"阳光下的星星",a:"金海心",m:"治愈花园",z:"华语经典",id:247821},
+{t:"춥다 IT'S COLD",a:"Epik High / 李遐怡",m:"深夜独白",z:"韩系OST",id:1426971953},
+{t:"两人雨天",a:"宇宙人",m:"治愈花园",z:"华语新声",id:33207607},
+{t:"可是你啊",a:"孟慧圆",m:"心动频率",z:"华语新声",id:1891711657},
+{t:"All about Anna",a:"昨夜派对",m:"心动频率",z:"华语新声",id:1367358886},
+{t:"词不达意",a:"林忆莲",m:"深夜独白",z:"华语抒情",id:255858},
+{t:"寂寞先生",a:"曹格",m:"深夜独白",z:"华语抒情",id:63538},
+{t:"Illusion",a:"DEN",m:"午夜幻想",z:"独立探索",id:2053139728},
+{t:"雨和我们拥抱在一起",a:"白色海岸",m:"治愈花园",z:"华语新声",id:2034185995},
+{t:"Be Be Your Love",a:"Rachael Yamagata",m:"心动频率",z:"独立探索",id:18733233},
+{t:"Drive",a:"RIOPY",m:"治愈花园",z:"钢琴冥想",id:524710897},
+{t:"Wyden Down",a:"RIOPY",m:"治愈花园",z:"钢琴冥想",id:524710893},
+{t:"沃尔塔瓦河",a:"捷克爱乐乐团",m:"治愈花园",z:"古典跨界",id:1895402047},
+{t:"Lovesong",a:"Adele",m:"深夜独白",z:"欧美流行",id:2117027},
+{t:"Landing Guy",a:"刘昊霖 / Kidult.",m:"治愈花园",z:"华语民谣",id:422428548},
+{t:"白",a:"明天周六",m:"治愈花园",z:"华语新声",id:156335},
+{t:"A Rocket to the Moon",a:"GAVIN:D",m:"治愈花园",z:"独立探索",id:1402913941},
+{t:"I Don't Know You",a:"Noni",m:"独立漫游",z:"独立探索",id:1440133987},
+{t:"Alla ögon på mig",a:"Darin",m:"心动频率",z:"欧美流行",id:null},
+{t:"Melody",a:"陶喆",m:"心动频率",z:"华语经典",id:150520},
+{t:"回忆的沙漏",a:"G.E.M. 邓紫棋",m:"深夜独白",z:"华语抒情",id:2714278529},
+{t:"怎么会忘记你",a:"王赫野 / 希林娜依高",m:"心动频率",z:"华语新声",id:2056243805},
+{t:"Lullaby",a:"Enzalla",m:"治愈花园",z:"独立探索",id:1939751157},
+{t:"passion",a:"barnes blvd.",m:"治愈花园",z:"独立探索",id:464188526},
+{t:"消亡史",a:"陈婧霏",m:"午夜幻想",z:"华语新声",id:1804329295},
+{t:"Lie",a:"Sasha Alex Sloan",m:"深夜独白",z:"欧美流行",id:1468082848},
+{t:"苹果",a:"廖俊涛",m:"深夜独白",z:"华语新声",id:1373843350},
+{t:"失语者",a:"蔡健雅",m:"深夜独白",z:"华语抒情",id:36024442},
+{t:"Month",a:"乃万",m:"独立漫游",z:"华语新声",id:null},
+{t:"Glimpse of Us",a:"Joji",m:"深夜独白",z:"欧美流行",id:1952528063},
+{t:"Heaven",a:"Julia Michaels",m:"治愈花园",z:"欧美流行",id:26128877},
+{t:"I'm Not The Only One",a:"Sam Smith",m:"深夜独白",z:"欧美流行",id:28586064},
+{t:"原谅 I",a:"张玉华",m:"深夜独白",z:"华语抒情",id:329371},
+{t:"BABYDOLL",a:"Ari Abdul",m:"独立漫游",z:"独立探索",id:1932769322},
+{t:"Leave The Door Open",a:"Leroy Sanchez",m:"心动频率",z:"欧美流行",id:1830775773},
+{t:"주저하는 연인들을 위해",a:"JANNABI",m:"治愈花园",z:"韩系OST",id:1351607468},
+{t:"深蓝",a:"陈婧霏",m:"午夜幻想",z:"华语新声",id:null},
+{t:"转身以后",a:"小男孩乐团",m:"心动频率",z:"华语新声",id:1380238551},
+{t:"As It Was",a:"PREP",m:"治愈花园",z:"欧美流行",id:1968869187},
+{t:"原谅",a:"王琪玮",m:"深夜独白",z:"华语新声",id:1901869540},
+{t:"瞬间",a:"G.E.M. 邓紫棋",m:"心动频率",z:"华语抒情",id:34723529},
+{t:"If We Ever Broke Up",a:"Mae Stephens",m:"心动频率",z:"欧美流行",id:2021343439},
+{t:"Dancing With A Stranger",a:"Sam Smith / Normani",m:"心动频率",z:"欧美流行",id:1338962014},
+{t:"都不懂",a:"step.jad依加",m:"深夜独白",z:"华语新声",id:1833804846},
+{t:"Blue Jay",a:"ZUHAIR / Jah Loon",m:"治愈花园",z:"独立探索",id:1917978260},
+{t:"Die For You",a:"The Weeknd / Ariana Grande",m:"心动频率",z:"欧美流行",id:442867526},
+{t:"Where Did U Go",a:"G.E.M. 邓紫棋",m:"深夜独白",z:"华语抒情",id:234064},
+{t:"温柔",a:"五月天 / 孙燕姿",m:"深夜独白",z:"华语经典",id:386538},
+{t:"Paris In The Rain",a:"Lauv",m:"治愈花园",z:"欧美流行",id:564000295},
+{t:"ROSS AND RACHEL",a:"Jake Miller",m:"心动频率",z:"欧美流行",id:1466544976},
+{t:"别问很可怕",a:"J.Sheon",m:"心动频率",z:"华语新声",id:469998923},
+{t:"我记得",a:"赵雷",m:"治愈花园",z:"华语民谣",id:1974443814},
+{t:"在你的身边",a:"盛哲",m:"治愈花园",z:"华语新声",id:475479888},
+{t:"永远都会在",a:"旅行团乐队",m:"治愈花园",z:"华语新声",id:486999662},
+{t:"A Thousand Years",a:"Jada Facer",m:"心动频率",z:"欧美流行",id:1937340367},
+{t:"7 Years",a:"Lukas Graham",m:"治愈花园",z:"欧美流行",id:405599119},
+{t:"柳叶笺",a:"朱彦安 / 张诗莉",m:"治愈花园",z:"华语新声",id:553795744},
+{t:"GHOST",a:"Tielle",m:"深夜独白",z:"独立探索",id:1856812413},
+{t:"微光",a:"袁野夕",m:"治愈花园",z:"华语新声",id:null},
+{t:"窃笑",a:"魏如萱",m:"治愈花园",z:"华语新声",id:1404531626},
+{t:"路过",a:"袁野夕",m:"治愈花园",z:"华语新声",id:562056116},
+{t:"数星星",a:"StrawberryPapa",m:"治愈花园",z:"华语新声",id:26060065},
+{t:"青苔",a:"莫非定律乐团",m:"治愈花园",z:"华语新声",id:1340036445},
+{t:"Why Don't You Stay",a:"Jeff Satur",m:"心动频率",z:"欧美流行",id:1969774924},
+{t:"Limbs of Faith",a:"Beauvois",m:"治愈花园",z:"后摇",id:476987164},
+{t:"Fly Me to the Moon",a:"The Macarons Project",m:"心动频率",z:"经典爵士",id:1442431916},
+{t:"Ferrari",a:"Bebe Rexha",m:"心动频率",z:"欧美流行",id:2053697901},
+{t:"喜欢",a:"李大奔",m:"心动频率",z:"华语新声",id:326719},
+{t:"安静的你",a:"Kirsty刘瑾睿",m:"治愈花园",z:"华语新声",id:1891169797},
+{t:"Wildest Dreams",a:"Anthem Lights",m:"午夜幻想",z:"欧美流行",id:35090871},
+{t:"Afterglow",a:"Leroy Sanchez",m:"治愈花园",z:"欧美流行",id:1808326623},
+{t:"Like a Song",a:"Anthony Lazaro",m:"治愈花园",z:"独立探索",id:1857180422},
+{t:"Nice to Meet You",a:"AMnesiac安尼西亚",m:"治愈花园",z:"华语新声",id:109524},
+{t:"Fade",a:"Jeff Satur",m:"治愈花园",z:"欧美流行",id:null},
+{t:"Green Book",a:"Ghostly Kisses",m:"治愈花园",z:"梦幻流行",id:null},
+{t:"Bloody Mary Girl",a:"She Her Her Hers",m:"独立漫游",z:"日系治愈",id:1400424017},
+{t:"成都",a:"赵雷",m:"治愈花园",z:"华语民谣",id:436514312},
+{t:"Dancing with my phone",a:"HYBS",m:"治愈花园",z:"独立探索",id:1891835283},
+{t:"霍乱时期的爱情",a:"向日葵乐队",m:"深夜独白",z:"华语新声",id:null},
+{t:"彗星",a:"白鲨JAWS",m:"心动频率",z:"华语新声",id:1404506846},
+{t:"新的心跳",a:"G.E.M. 邓紫棋",m:"心动频率",z:"华语抒情",id:33190007},
+{t:"后来的我们",a:"五月天",m:"深夜独白",z:"华语经典",id:422104138},
+{t:"后会无期",a:"G.E.M. 邓紫棋",m:"深夜独白",z:"华语抒情",id:28793502},
+{t:"仰望星空",a:"张杰",m:"治愈花园",z:"华语经典",id:1465225536},
+{t:"夏夜芦苇",a:"NoSleep Child",m:"治愈花园",z:"华语新声",id:1497577400},
+{t:"囹圄",a:"姜没",m:"深夜独白",z:"华语新声",id:572906215},
+{t:"几分之几",a:"卢广仲",m:"治愈花园",z:"华语民谣",id:530995517},
+{t:"兜转",a:"陈势安",m:"深夜独白",z:"华语抒情",id:null},
+{t:"苦橙",a:"RAiNBOW计划 / 林力尧",m:"治愈花园",z:"华语新声",id:35625819},
+{t:"无话可说",a:"张洢豪",m:"深夜独白",z:"华语新声",id:1306436266},
+{t:"多远都要在一起",a:"G.E.M. 邓紫棋",m:"心动频率",z:"华语抒情",id:30612793},
+{t:"你啊你啊",a:"魏如萱",m:"治愈花园",z:"华语新声",id:440208470},
+{t:"先说谎的人",a:"h3R3 / 张鑫",m:"深夜独白",z:"华语新声",id:1903876057},
+{t:"不要想太多",a:"郭顶",m:"治愈花园",z:"华语新声",id:85571},
+{t:"Home",a:"Peder Elias",m:"治愈花园",z:"欧美流行",id:null},
+{t:"Darkness around",a:"Jonas David",m:"深夜独白",z:"独立探索",id:2003813430},
+{t:"Growing Pains",a:"Nathan Trent",m:"治愈花园",z:"欧美流行",id:1858365222},
+{t:"可是爱最为致命",a:"莫非定律乐团",m:"深夜独白",z:"华语新声",id:null},
+{t:"太空",a:"吴青峰",m:"午夜幻想",z:"华语经典",id:1388999487},
+{t:"飞鸟",a:"枯木逢春 / 尚士达",m:"治愈花园",z:"华语民谣",id:2673717400},
+{t:"你是秋天晚上的月亮",a:"周三七",m:"治愈花园",z:"华语新声",id:490419109},
+{t:"当我望着你",a:"鹿洐人",m:"心动频率",z:"华语新声",id:1885147533},
+{t:"好不容易",a:"告五人",m:"心动频率",z:"华语新声",id:1902251868},
+{t:"What If I Wasn't Done Loving You?",a:"Fly By Midnight",m:"心动频率",z:"欧美流行",id:1961962526},
+{t:"你瞒我瞒",a:"陈柏宇",m:"深夜独白",z:"粤语世界",id:27511488},
+{t:"旅行中忘记",a:"蔻晴",m:"深夜独白",z:"华语新声",id:1487457637},
+{t:"麻醉师",a:"胡睿",m:"深夜独白",z:"华语新声",id:null},
+{t:"玫瑰少年",a:"五月天",m:"心动频率",z:"华语经典",id:1383023894},
+{t:"Strawberries & Cigarettes",a:"Troye Sivan",m:"治愈花园",z:"欧美流行",id:2061786968},
+{t:"谁",a:"廖俊涛",m:"深夜独白",z:"华语新声",id:566436427},
+{t:"云泥",a:"贺子轩",m:"深夜独白",z:"华语新声",id:1806581395},
+{t:"同花顺",a:"林倛玉",m:"深夜独白",z:"华语抒情",id:4872687},
+{t:"デート",a:"RADWIMPS",m:"心动频率",z:"日系治愈",id:426881489},
+{t:"刻在我心底的名字",a:"卢广仲",m:"深夜独白",z:"华语民谣",id:1472921626},
+{t:"你幸福吗？",a:"胡鸿钧",m:"深夜独白",z:"粤语世界",id:3327695636},
+{t:"Shangri-La Is Calling",a:"椅子乐团",m:"治愈花园",z:"华语新声",id:1960129465},
+{t:"后来的灯火",a:"醒山",m:"独立漫游",z:"华语新声",id:1844488612},
+{t:"再见迪曼",a:"马良",m:"深夜独白",z:"华语民谣",id:1856249787},
+{t:"就让我坠入海底",a:"Sunken Boat沉舟乐队",m:"深夜独白",z:"华语新声",id:1447840399},
+{t:"向告别飞驰吧",a:"昨夜派对",m:"独立漫游",z:"华语新声",id:1435594710},
+{t:"California",a:"Ridgely",m:"治愈花园",z:"欧美流行",id:1417055605},
+{t:"走入有雾的森林",a:"Cicada",m:"治愈花园",z:"后摇",id:1399998675},
+{t:"华年",a:"鹿先森乐队",m:"治愈花园",z:"华语民谣",id:542667160},
+{t:"Magnolia",a:"Nyah Grace",m:"治愈花园",z:"欧美流行",id:494642794},
+{t:"Villanelle",a:"Jo Blankenburg",m:"治愈花园",z:"钢琴冥想",id:2100374661},
+{t:"Paul",a:"Cavetown",m:"治愈花园",z:"独立探索",id:1849403349},
+{t:"约会在星期天晚上",a:"莫非定律乐团",m:"心动频率",z:"华语新声",id:2073407353},
+{t:"晚风",a:"陈婧霏",m:"治愈花园",z:"华语新声",id:1299326404},
+{t:"Mia Hates Jazz",a:"Justin Hurwitz",m:"午夜幻想",z:"电影原声",id:445867397},
+{t:"City Of Stars (Humming)",a:"Justin Hurwitz",m:"午夜幻想",z:"电影原声",id:461864026},
+{t:"Yellow",a:"Coldplay",m:"治愈花园",z:"欧美摇滚",id:17177324},
+{t:"我是如此相信",a:"周杰伦",m:"治愈花园",z:"华语经典",id:null},
+{t:"You Are Not Alone",a:"Michael Jackson",m:"治愈花园",z:"欧美经典",id:3372880505},
+{t:"追风",a:"郭一凡",m:"治愈花园",z:"华语新声",id:1400260129},
+{t:"有我呢",a:"郭一凡",m:"治愈花园",z:"华语新声",id:1400259397},
+{t:"这世界那么多人",a:"莫文蔚",m:"深夜独白",z:"华语抒情",id:1842025914},
+{t:"The Reason",a:"Hoobastank",m:"治愈花园",z:"欧美摇滚",id:5048576},
+{t:"桥豆麻袋",a:"陈粒",m:"治愈花园",z:"华语民谣",id:421563713},
+{t:"Dear Mary",a:"悶餅MOONBAND",m:"心动频率",z:"华语新声",id:1334296072},
+{t:"晴天",a:"周杰伦",m:"心动频率",z:"华语经典",id:3339230677},
+{t:"野子",a:"苏运莹",m:"心动频率",z:"华语新声",id:401723037},
+{t:"房间",a:"刘瑞琦",m:"治愈花园",z:"华语新声",id:1407424789},
+{t:"起风了",a:"周深",m:"治愈花园",z:"华语新声",id:1475596788},
+{t:"Careless Whisper",a:"Sam Levine",m:"治愈花园",z:"经典爵士",id:19059807},
+{t:"Easily",a:"Bruno Major",m:"心动频率",z:"欧美流行",id:449577802},
+{t:"Falling Slowly",a:"Glen Hansard",m:"深夜独白",z:"电影原声",id:4340758},
+{t:"再谈记忆",a:"盘尼西林乐队",m:"心动频率",z:"华语新声",id:472137696},
+{t:"Shape Of My Heart",a:"Sting",m:"治愈花园",z:"欧美经典",id:19091879},
+{t:"白玫瑰",a:"陈奕迅",m:"深夜独白",z:"粤语世界",id:65761},
+{t:"走马",a:"陈粒",m:"治愈花园",z:"华语民谣",id:30431367},
+{t:"绝对占有 相对自由",a:"陈粒",m:"独立漫游",z:"华语民谣",id:30431377},
+{t:"明年今日",a:"陈奕迅",m:"深夜独白",z:"粤语世界",id:65952},
+{t:"Dancing With Your Ghost",a:"Sasha Alex Sloan",m:"深夜独白",z:"欧美流行",id:1374329431},
+{t:"纯洁2016",a:"木马",m:"独立漫游",z:"华语新声",id:417859076},
+{t:"Gravity",a:"郑成河",m:"治愈花园",z:"钢琴冥想",id:28658512},
+{t:"All in a Daydream",a:"Snigellin",m:"治愈花园",z:"独立探索",id:865283011},
+{t:"富士山下",a:"陈奕迅",m:"深夜独白",z:"粤语世界",id:65766},
+{t:"我好想你",a:"苏打绿",m:"深夜独白",z:"华语经典",id:2652647276},
+{t:"二人の帰り道",a:"GIN",m:"治愈花园",z:"日系治愈",id:29836335},
+{t:"Monsters",a:"Katie Sky",m:"午夜幻想",z:"欧美流行",id:28461933},
+{t:"Ascent",a:"Peter Kater",m:"治愈花园",z:"钢琴冥想",id:18110936},
+{t:"恋をしたのは",a:"aiko",m:"心动频率",z:"日系治愈",id:431610015},
+{t:"一路向北",a:"周杰伦",m:"深夜独白",z:"华语经典",id:3336883136},
+{t:"夏バテ",a:"aiko",m:"治愈花园",z:"日系治愈",id:431534304},
+{t:"夢灯籠",a:"RADWIMPS",m:"午夜幻想",z:"日系治愈",id:426881480},
+{t:"Forever Friends",a:"Daoko",m:"心动频率",z:"日系治愈",id:494858477},
+{t:"不潮不用花钱",a:"林俊杰",m:"心动频率",z:"华语抒情",id:108463},
+{t:"水星记",a:"郭顶",m:"深夜独白",z:"华语新声",id:441491828},
+{t:"不要说话",a:"陈奕迅",m:"深夜独白",z:"粤语世界",id:25906124},
+{t:"保留",a:"郭顶",m:"治愈花园",z:"华语新声",id:442869203},
+{t:"从你的全世界路过",a:"UlyseL",m:"治愈花园",z:"独立探索",id:3350270551},
+{t:"Take Me Hand",a:"DAISHI DANCE",m:"治愈花园",z:"日系治愈",id:26092806},
+{t:"献给爱丽丝",a:"Richard Clayderman",m:"治愈花园",z:"古典跨界",id:18499250},
+{t:"海底",a:"袁子希",m:"深夜独白",z:"华语新声",id:1468555610},
+{t:"盛夏的舞",a:"Heyo / 卫诗",m:"心动频率",z:"粤语世界",id:500538107},
+{t:"爱与诚",a:"古巨基",m:"深夜独白",z:"粤语世界",id:86316},
+{t:"爱，存在",a:"王靖雯",m:"心动频率",z:"华语新声",id:3312589044},
+{t:"Hotel California",a:"Eagles",m:"独立漫游",z:"欧美摇滚",id:26289183},
+{t:"風の住む街",a:"矶村由纪子",m:"治愈花园",z:"日系治愈",id:586299},
+{t:"死在旋转公寓",a:"发光曲线",m:"独立漫游",z:"华语新声",id:356760},
+{t:"小情歌",a:"苏打绿",m:"心动频率",z:"华语经典",id:1952285469},
+{t:"春天交响曲",a:"苏慧伦",m:"治愈花园",z:"华语经典",id:288726},
+{t:"甜甜的",a:"周杰伦",m:"心动频率",z:"华语经典",id:2704069151},
+{t:"月のナミダ",a:"押尾光太郎",m:"治愈花园",z:"日系治愈",id:28885226},
+{t:"Summer",a:"久石让",m:"治愈花园",z:"钢琴冥想",id:443242},
+{t:"スパークル",a:"RADWIMPS",m:"午夜幻想",z:"日系治愈",id:426881503},
+{t:"Fish In The Pool",a:"岩井俊二",m:"治愈花园",z:"日系治愈",id:31861269},
+{t:"三葉のテーマ",a:"RADWIMPS",m:"午夜幻想",z:"日系治愈",id:426881500},
+{t:"コネクト",a:"触手猴",m:"治愈花园",z:"钢琴冥想",id:29774275},
+{t:"Cry for the moon",a:"出羽良彰",m:"治愈花园",z:"日系治愈",id:28445796},
+{t:"なんでもないや",a:"RADWIMPS",m:"治愈花园",z:"日系治愈",id:426881506},
+{t:"もののけ姫",a:"日本群星",m:"治愈花园",z:"日系治愈",id:504781815},
+{t:"瑠璃色の地球",a:"手嶌葵",m:"治愈花园",z:"日系治愈",id:413961276},
+{t:"Kan Inte Saga Nej",a:"Veronica Maggio",m:"治愈花园",z:"独立探索",id:3799522},
+{t:"光",a:"陈粒",m:"治愈花园",z:"华语民谣",id:30431364},
+{t:"开往春天的地铁",a:"方便便",m:"治愈花园",z:"华语新声",id:435872232},
+{t:"Lonely Day",a:"Jurrivh",m:"深夜独白",z:"独立探索",id:1831761295},
+{t:"城南花已开",a:"三亩地",m:"治愈花园",z:"钢琴冥想",id:468176711},
+{t:"IF YOU",a:"BIGBANG",m:"深夜独白",z:"K-Pop",id:32922450},
+{t:"Rain after Summer",a:"羽肿",m:"治愈花园",z:"独立探索",id:430685732},
+{t:"月半小夜曲",a:"李克勤",m:"治愈花园",z:"粤语世界",id:115162},
+{t:"告白之夜",a:"小蓝帽",m:"午夜幻想",z:"日系治愈",id:2133167809},
+{t:"月光曲",a:"Classical Artists",m:"治愈花园",z:"古典跨界",id:1925203994},
+{t:"LA VIE EN ROSE",a:"小野丽莎",m:"治愈花园",z:"日系治愈",id:633113},
+{t:"虚拟",a:"陈粒",m:"治愈花园",z:"华语民谣",id:421423808},
+{t:"青石巷",a:"魏琮霏",m:"治愈花园",z:"华语民谣",id:422429425},
+{t:"Something In The Rain",a:"Rachael Yamagata",m:"治愈花园",z:"独立探索",id:1335841088},
+{t:"记得",a:"林俊杰",m:"深夜独白",z:"华语抒情",id:108269},
+{t:"她说",a:"林俊杰",m:"深夜独白",z:"华语抒情",id:108242},
+{t:"夜空中最亮的星",a:"逃跑计划",m:"治愈花园",z:"华语新声",id:25706282},
+{t:"芳草地",a:"陈粒",m:"治愈花园",z:"华语民谣",id:421563711},
+{t:"Down",a:"Marian Hill",m:"治愈花园",z:"欧美流行",id:405226741},
+{t:"小半",a:"陈粒",m:"治愈花园",z:"华语民谣",id:421423806},
+{t:"This Love",a:"Maroon 5",m:"心动频率",z:"欧美流行",id:21253947},
+{t:"The Destruction of Laputa",a:"久石让",m:"治愈花园",z:"钢琴冥想",id:443435},
+{t:"醉赤壁",a:"林俊杰",m:"治愈花园",z:"华语抒情",id:108478},
+{t:"模特",a:"李荣浩",m:"治愈花园",z:"华语抒情",id:27731176},
+{t:"繋ぎとめた世界",a:"帆足圭吾",m:"治愈花园",z:"日系治愈",id:32857651},
+{t:"いのちの名前",a:"广桥真纪子",m:"治愈花园",z:"日系治愈",id:578090},
+{t:"幻昼",a:"MayPiano",m:"治愈花园",z:"钢琴冥想",id:null},
+{t:"Flower",a:"恶梦Yk / 大喜",m:"治愈花园",z:"独立探索",id:545308792},
+{t:"Lemon",a:"米津玄師",m:"治愈花园",z:"日系治愈",id:536622304},
+{t:"浪费",a:"林宥嘉 / 郁可唯",m:"深夜独白",z:"华语抒情",id:3320331607},
+{t:"心做し",a:"majiko",m:"深夜独白",z:"日系治愈",id:31421443},
+{t:"白雪",a:"KOKIA",m:"治愈花园",z:"日系治愈",id:4877038},
+{t:"核：冬夜的第一支歌",a:"昨夜派对",m:"治愈花园",z:"华语新声",id:null},
+{t:"In the Mood for Love",a:"梅林茂",m:"午夜幻想",z:"钢琴冥想",id:298258},
+{t:"Kirameki",a:"RADWIMPS",m:"午夜幻想",z:"日系治愈",id:1414065950},
+{t:"Nandemonaiya",a:"RADWIMPS",m:"治愈花园",z:"日系治愈",id:456185066},
+{t:"Is There Still Anything That Love Can Do",a:"RADWIMPS",m:"午夜幻想",z:"日系治愈",id:426881506},
 ];
 
 // Deduplicate
@@ -832,131 +789,42 @@ function renderSongs(list){
       <div class="play-btn"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7z"/></svg></div>
     `;
     div.addEventListener('click',()=>{
-      playSong(s.t, s.a);
+      playSong(s.t, s.a, s.id);
     });
     c.appendChild(div);
   });
 }
 
 // ===== MUSIC PLAYER =====
-let ap = null;
-const songUrlCache = {};
+function playSong(title, artist, neteaseId) {
+  const bar = document.getElementById('playerBar');
+  const fb = document.getElementById('playerFallback');
+  const fbLink = document.getElementById('fallbackLink');
+  const barTitle = document.getElementById('playerBarTitle');
+  const frame = document.getElementById('playerFrame');
 
-function showPlayerBar() {
-  document.getElementById('playerBar').classList.add('show');
-}
+  fb.classList.remove('show');
 
-async function searchNeteaseId(title, artist) {
-  const cacheKey = title + '|' + artist;
-  if (songUrlCache[cacheKey]) return songUrlCache[cacheKey];
-
-  const queries = [
-    title + ' ' + artist.split(' / ')[0],
-    title
-  ];
-
-  for (const query of queries) {
-    try {
-      const resp = await fetch('https://music.163.com/api/search/get/web?s=' + encodeURIComponent(query) + '&type=1&offset=0&limit=5');
-      if (!resp.ok) continue;
-      const data = await resp.json();
-      if (data.result && data.result.songs && data.result.songs.length > 0) {
-        const song = data.result.songs[0];
-        const id = song.id;
-        songUrlCache[cacheKey] = id;
-        return id;
-      }
-    } catch(e) {
-      continue;
-    }
-  }
-  return null;
-}
-
-async function getSongUrl(id) {
-  if (songUrlCache['url_' + id]) return songUrlCache['url_' + id];
-  try {
-    const resp = await fetch('https://music.163.com/song/media/outer/url?id=' + id + '.mp3');
-    // The URL itself is the redirect to the actual mp3
-    const finalUrl = resp.url || resp.redirected ? resp.url : ('https://music.163.com/song/media/outer/url?id=' + id + '.mp3');
-    songUrlCache['url_' + id] = finalUrl;
-    return finalUrl;
-  } catch(e) {
-    return null;
-  }
-}
-
-async function playSong(title, artist) {
-  showPlayerBar();
-  document.getElementById('playerLoading').classList.add('show');
-  document.getElementById('playerFallback').classList.remove('show');
-
-  const id = await searchNeteaseId(title, artist);
-  document.getElementById('playerLoading').classList.remove('show');
-
-  if (!id) {
-    const fb = document.getElementById('playerFallback');
-    const link = document.getElementById('fallbackLink');
-    const searchUrl = 'https://music.163.com/#/search/m/?s=' + encodeURIComponent(title + ' ' + artist);
-    link.href = searchUrl;
-    link.textContent = '> 没找到音源，去网易云搜索「' + title + ' - ' + artist.split(' / ')[0] + '」';
-    fb.classList.add('show');
-    return;
-  }
-
-  // Destroy previous player
-  if (ap) {
-    ap.destroy();
-    ap = null;
-  }
-
-  const container = document.getElementById('aplayer-container');
-  container.innerHTML = '';
-
-  const audioUrl = 'https://music.163.com/song/media/outer/url?id=' + id + '.mp3';
-
-  try {
-    ap = new APlayer({
-      container: container,
-      theme: '#f97316',
-      autoplay: true,
-      loop: 'none',
-      order: 'list',
-      preload: 'auto',
-      volume: 0.8,
-      mutex: true,
-      listFolded: true,
-      listMaxHeight: '0px',
-      lrcType: 0,
-      audio: [{
-        name: title,
-        artist: artist,
-        url: audioUrl,
-        cover: '',
-        theme: '#f97316',
-      }]
-    });
-
-    // Handle play error
-    ap.on('error', function() {
-      console.warn('Playback error for', title, id);
-      const fb = document.getElementById('playerFallback');
-      const link = document.getElementById('fallbackLink');
-      link.href = 'https://music.163.com/#/song?id=' + id;
-      link.textContent = '> 播放受限（可能是VIP歌曲），去网易云打开';
-      fb.classList.add('show');
-    });
-
-    document.getElementById('playerFallback').classList.remove('show');
-  } catch(e) {
-    console.error('APlayer init error:', e);
-    const fb = document.getElementById('playerFallback');
-    const link = document.getElementById('fallbackLink');
-    link.href = 'https://music.163.com/#/song?id=' + id;
-    link.textContent = '> 去网易云播放这首歌';
+  if (neteaseId) {
+    // Embed NetEase iframe player
+    barTitle.textContent = '♪ ' + title + ' — ' + artist.split(' / ')[0];
+    frame.src = 'https://music.163.com/outchain/player?type=2&id=' + neteaseId + '&auto=1&height=66';
+    bar.classList.add('show');
+  } else {
+    // No NetEase match — provide search link
+    bar.classList.remove('show');
+    frame.src = '';
+    fbLink.href = 'https://music.163.com/#/search/m/?s=' + encodeURIComponent(title + ' ' + artist.split(' / ')[0]);
+    fbLink.textContent = '♪ 「' + title + '」— ' + artist.split(' / ')[0] + '  |  点击在网易云搜索播放';
     fb.classList.add('show');
   }
 }
+
+// Close button
+document.getElementById('playerBarClose').addEventListener('click', function() {
+  document.getElementById('playerBar').classList.remove('show');
+  document.getElementById('playerFrame').src = '';
+});
 
 let currentFilter=null;
 function filterByMood(mood){
