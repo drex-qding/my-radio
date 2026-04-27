@@ -1,0 +1,1018 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>MY RADIO — 464首歌蒸馏成的AI电台</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=Noto+Sans+SC:wght@300;400;500;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/aplayer@1.10.1/dist/APlayer.min.css">
+<style>
+*,*::before,*::after{margin:0;padding:0;box-sizing:border-box}
+:root{
+  --bg:#0a0a0b;--bg2:#111113;--bg3:#18181b;--bg4:#222225;
+  --text:#f4f4f5;--text2:#a1a1aa;--text3:#71717a;
+  --accent:#f97316;--accent2:#fb923c;--accent-glow:rgba(249,115,22,.15);
+  --green:#22c55e;--blue:#3b82f6;--purple:#a855f7;--pink:#ec4899;--red:#ef4444;
+  --radius:12px;--radius-lg:20px;--radius-xl:28px;
+}
+html{scroll-behavior:smooth;scrollbar-width:thin;scrollbar-color:var(--bg4) transparent}
+body{font-family:'Inter','Noto Sans SC',-apple-system,sans-serif;background:var(--bg);color:var(--text);overflow-x:hidden;line-height:1.6;-webkit-font-smoothing:antialiased}
+::selection{background:var(--accent);color:#fff}
+::-webkit-scrollbar{width:6px}
+::-webkit-scrollbar-track{background:transparent}
+::-webkit-scrollbar-thumb{background:var(--bg4);border-radius:3px}
+
+/* ===== HERO ===== */
+.hero{min-height:100vh;display:flex;flex-direction:column;align-items:center;justify-content:center;position:relative;padding:40px 20px;text-align:center}
+.hero::before{content:'';position:absolute;inset:0;background:radial-gradient(ellipse 80% 60% at 50% 40%,rgba(249,115,22,.08),transparent 70%);pointer-events:none}
+.hero-badge{display:inline-flex;align-items:center;gap:8px;padding:6px 16px;border-radius:99px;background:var(--bg3);border:1px solid var(--bg4);font-size:13px;color:var(--text2);margin-bottom:32px}
+.hero-badge .dot{width:6px;height:6px;border-radius:50%;background:var(--accent);animation:pulse 2s infinite}
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:.3}}
+.hero-title{font-size:clamp(48px,10vw,120px);font-weight:900;letter-spacing:-.03em;line-height:.95;margin-bottom:16px}
+.hero-title span{background:linear-gradient(135deg,var(--accent),var(--pink));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
+.hero-sub{font-size:clamp(16px,2.5vw,22px);color:var(--text2);font-weight:300;max-width:600px;margin-bottom:48px}
+.hero-stats{display:flex;gap:48px;flex-wrap:wrap;justify-content:center}
+.hero-stat{text-align:center}
+.hero-stat .num{font-size:36px;font-weight:800;letter-spacing:-.02em}
+.hero-stat .label{font-size:13px;color:var(--text3);margin-top:4px}
+.hero-scroll{position:absolute;bottom:40px;animation:float 3s ease-in-out infinite}
+.hero-scroll svg{width:24px;height:24px;color:var(--text3)}
+@keyframes float{0%,100%{transform:translateY(0)}50%{transform:translateY(10px)}}
+
+/* ===== AUDIO VISUALIZER ===== */
+.visualizer{display:flex;align-items:flex-end;justify-content:center;gap:3px;height:60px;margin-bottom:40px}
+.visualizer .bar{width:4px;border-radius:2px;background:var(--accent);opacity:.7;animation:eq 1.2s ease-in-out infinite}
+@keyframes eq{0%,100%{height:8px}50%{height:var(--h,40px)}}
+
+/* ===== SECTION COMMON ===== */
+.section{padding:80px 20px;max-width:1200px;margin:0 auto}
+.section-label{font-size:12px;font-weight:600;text-transform:uppercase;letter-spacing:.15em;color:var(--accent);margin-bottom:12px}
+.section-title{font-size:clamp(28px,4vw,44px);font-weight:800;letter-spacing:-.02em;margin-bottom:12px}
+.section-desc{font-size:16px;color:var(--text2);max-width:560px;margin-bottom:40px}
+
+/* ===== MOOD CHANNELS ===== */
+.channels{display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:16px}
+.channel{position:relative;padding:28px;border-radius:var(--radius-lg);background:var(--bg2);border:1px solid var(--bg4);cursor:pointer;transition:all .3s ease;overflow:hidden}
+.channel:hover{transform:translateY(-4px);border-color:var(--ch-color,var(--accent));box-shadow:0 20px 40px rgba(0,0,0,.3),0 0 0 1px var(--ch-color,var(--accent))}
+.channel::before{content:'';position:absolute;top:0;left:0;right:0;height:3px;background:var(--ch-color,var(--accent));opacity:0;transition:opacity .3s}
+.channel:hover::before{opacity:1}
+.channel-icon{font-size:32px;margin-bottom:16px}
+.channel-name{font-size:20px;font-weight:700;margin-bottom:6px}
+.channel-desc{font-size:14px;color:var(--text2);margin-bottom:16px;line-height:1.5}
+.channel-count{font-size:13px;color:var(--text3);display:flex;align-items:center;gap:6px}
+.channel-count svg{width:14px;height:14px}
+.channel.active{border-color:var(--ch-color,var(--accent));background:linear-gradient(135deg,var(--bg2),rgba(249,115,22,.05))}
+
+/* ===== INSIGHTS ===== */
+.insights-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(340px,1fr));gap:20px}
+.insight-card{padding:28px;border-radius:var(--radius-lg);background:var(--bg2);border:1px solid var(--bg4)}
+.insight-card h3{font-size:16px;font-weight:600;margin-bottom:16px;display:flex;align-items:center;gap:8px}
+.insight-card h3 .emoji{font-size:20px}
+.lang-bar{display:flex;height:8px;border-radius:4px;overflow:hidden;margin:16px 0 12px}
+.lang-bar div{transition:width 1s ease}
+.lang-legend{display:flex;flex-wrap:wrap;gap:16px}
+.lang-item{display:flex;align-items:center;gap:6px;font-size:13px;color:var(--text2)}
+.lang-dot{width:10px;height:10px;border-radius:3px}
+.artist-list{list-style:none;display:flex;flex-direction:column;gap:10px}
+.artist-list li{display:flex;align-items:center;justify-content:space-between;padding:8px 12px;border-radius:var(--radius);background:var(--bg3)}
+.artist-list li .name{font-size:14px;font-weight:500}
+.artist-list li .cnt{font-size:13px;color:var(--text3)}
+.tag-cloud{display:flex;flex-wrap:wrap;gap:8px}
+.tag{padding:6px 14px;border-radius:99px;font-size:13px;background:var(--bg3);color:var(--text2);border:1px solid var(--bg4);transition:all .2s}
+.tag:hover{border-color:var(--accent);color:var(--accent)}
+
+/* ===== SONG LIST ===== */
+.song-list-section{background:var(--bg2);border-radius:var(--radius-xl);border:1px solid var(--bg4);padding:32px;min-height:400px}
+.song-list-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:24px;flex-wrap:wrap;gap:12px}
+.song-list-header h2{font-size:24px;font-weight:700;display:flex;align-items:center;gap:10px}
+.song-list-header h2 .emoji{font-size:28px}
+.song-count{font-size:14px;color:var(--text3);padding:4px 12px;background:var(--bg3);border-radius:99px}
+.search-box{display:flex;align-items:center;gap:8px;padding:10px 16px;background:var(--bg3);border-radius:var(--radius);border:1px solid var(--bg4);margin-bottom:20px}
+.search-box svg{width:16px;height:16px;color:var(--text3);flex-shrink:0}
+.search-box input{flex:1;background:none;border:none;outline:none;color:var(--text);font-size:14px;font-family:inherit}
+.search-box input::placeholder{color:var(--text3)}
+.song-items{display:flex;flex-direction:column;gap:2px;max-height:60vh;overflow-y:auto;padding-right:8px}
+.song-item{display:flex;align-items:center;gap:14px;padding:10px 14px;border-radius:var(--radius);transition:background .2s;cursor:pointer}
+.song-item:hover{background:var(--bg3)}
+.song-item .idx{font-size:13px;color:var(--text3);width:24px;text-align:right;flex-shrink:0;font-variant-numeric:tabular-nums}
+.song-item .info{flex:1;min-width:0}
+.song-item .title{font-size:14px;font-weight:500;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.song-item .artist{font-size:13px;color:var(--text3);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.song-item .mood-tag{font-size:11px;padding:2px 8px;border-radius:99px;background:var(--bg4);color:var(--text2);white-space:nowrap;flex-shrink:0}
+.song-item .play-btn{width:32px;height:32px;border-radius:50%;background:var(--accent);display:flex;align-items:center;justify-content:center;opacity:0;transition:all .2s;flex-shrink:0}
+.song-item:hover .play-btn{opacity:1}
+.song-item .play-btn svg{width:14px;height:14px;color:#fff;margin-left:2px}
+.empty-state{text-align:center;padding:60px 20px;color:var(--text3)}
+.empty-state .emoji{font-size:48px;margin-bottom:16px}
+.empty-state p{font-size:15px}
+
+/* ===== PLAYER BAR ===== */
+.player-bar{position:fixed;bottom:0;left:0;right:0;z-index:100;transform:translateY(100%);transition:transform .4s cubic-bezier(.4,0,.2,1)}
+.player-bar.show{transform:translateY(0)}
+.player-inner{max-width:1200px;margin:0 auto;display:flex;align-items:center;gap:16px;padding:8px 20px 8px 20px}
+.player-cover{width:44px;height:44px;border-radius:var(--radius);background:var(--bg3);display:flex;align-items:center;justify-content:center;font-size:20px;flex-shrink:0}
+.player-info{flex:1;min-width:0;max-width:200px}
+.player-info .p-title{font-size:14px;font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.player-info .p-artist{font-size:13px;color:var(--text3)}
+.player-progress{flex:2;display:flex;align-items:center;gap:10px}
+.player-progress input[type=range]{flex:1;-webkit-appearance:none;height:4px;background:var(--bg4);border-radius:2px;outline:none}
+.player-progress input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:12px;height:12px;border-radius:50%;background:var(--accent);cursor:pointer}
+.player-controls{display:flex;align-items:center;gap:8px}
+.player-controls button{width:36px;height:36px;border-radius:50%;border:none;background:none;color:var(--text);cursor:pointer;display:flex;align-items:center;justify-content:center;transition:background .2s}
+.player-controls button:hover{background:var(--bg3)}
+.player-controls .main-play{width:42px;height:42px;background:var(--accent);color:#fff}
+.player-controls .main-play:hover{background:var(--accent2)}
+.player-controls svg{width:18px;height:18px}
+
+/* ===== APLAYER DARK THEME OVERRIDE ===== */
+.aplayer{background:var(--bg)!important;border:none!important;box-shadow:0 -1px 0 var(--bg4)!important;margin:0!important;border-radius:0!important}
+.aplayer .aplayer-body{background:var(--bg)!important}
+.aplayer .aplayer-info{padding:0 0 0 10px!important}
+.aplayer .aplayer-info .aplayer-music .aplayer-title{color:var(--text)!important;font-size:14px!important;font-weight:600!important}
+.aplayer .aplayer-info .aplayer-music .aplayer-author{color:var(--text3)!important;font-size:12px!important}
+.aplayer .aplayer-info .aplayer-controller .aplayer-bar-wrap .aplayer-bar{background:var(--bg4)!important;border-radius:2px!important}
+.aplayer .aplayer-info .aplayer-controller .aplayer-bar-wrap .aplayer-bar .aplayer-loaded{background:var(--bg3)!important;border-radius:2px!important}
+.aplayer .aplayer-info .aplayer-controller .aplayer-bar-wrap .aplayer-bar .aplayer-played{background:var(--accent)!important;border-radius:2px!important}
+.aplayer .aplayer-info .aplayer-controller .aplayer-bar-wrap .aplayer-bar .aplayer-played .aplayer-thumb{background:var(--accent)!important;border:2px solid var(--bg)!important;box-shadow:none!important}
+.aplayer .aplayer-info .aplayer-controller .aplayer-time{color:var(--text3)!important;font-size:12px!important}
+.aplayer .aplayer-icon{fill:var(--text3)!important}
+.aplayer .aplayer-icon:hover{fill:var(--text)!important}
+.aplayer .aplayer-lrc{display:none!important}
+.aplayer .aplayer-pic{border-radius:8px!important}
+.aplayer .aplayer-volume-wrap .aplayer-volume-bar{background:var(--bg4)!important}
+.aplayer .aplayer-volume-wrap .aplayer-volume-bar .aplayer-volume{background:var(--accent)!important}
+.aplayer .aplayer-list{background:var(--bg)!important;border-top:1px solid var(--bg4)!important}
+.aplayer .aplayer-list ol li{color:var(--text2)!important;border-top:none!important;font-size:13px!important}
+.aplayer .aplayer-list ol li.aplayer-list-light{background:var(--bg2)!important;color:var(--accent)!important}
+.aplayer .aplayer-list ol li:hover{background:var(--bg2)!important}
+.aplayer .aplayer-list .aplayer-list-cur{color:var(--accent)!important}
+.aplayer .aplayer-list .aplayer-list-index{color:var(--text3)!important}
+.aplayer svg{fill:currentColor}
+.aplayer .aplayer-icon{fill:var(--text3)!important}
+
+/* Player loading state */
+.player-loading{display:none;align-items:center;gap:8px;color:var(--text3);font-size:13px;padding:10px 20px;background:var(--bg)}
+.player-loading.show{display:flex}
+.player-loading .spinner{width:16px;height:16px;border:2px solid var(--bg4);border-top-color:var(--accent);border-radius:50%;animation:spin .6s linear infinite}
+@keyframes spin{to{transform:rotate(360deg)}}
+
+/* Player fallback button */
+.player-fallback{display:none;padding:8px 20px;background:var(--bg);border-top:1px solid var(--bg4);text-align:center}
+.player-fallback.show{display:block}
+.player-fallback a{color:var(--accent);text-decoration:none;font-size:13px;transition:color .2s}
+.player-fallback a:hover{color:var(--accent2)}
+
+/* ===== FOOTER ===== */
+.footer{text-align:center;padding:60px 20px 140px;color:var(--text3);font-size:13px}
+.footer a{color:var(--accent);text-decoration:none}
+
+/* ===== RESPONSIVE ===== */
+@media(max-width:640px){
+  .hero-stats{gap:24px}
+  .hero-stat .num{font-size:28px}
+  .channels{grid-template-columns:1fr}
+  .insights-grid{grid-template-columns:1fr}
+  .song-list-section{padding:20px}
+  .player-progress{display:none}
+  .section{padding:60px 16px}
+}
+
+/* ===== ANIMATIONS ===== */
+.fade-up{opacity:0;transform:translateY(30px);transition:all .8s cubic-bezier(.4,0,.2,1)}
+.fade-up.visible{opacity:1;transform:translateY(0)}
+.stagger>*{opacity:0;transform:translateY(20px)}
+.stagger>.visible{animation:fadeUp .6s forwards}
+@keyframes fadeUp{to{opacity:1;transform:translateY(0)}}
+</style>
+</head>
+<body>
+
+<!-- HERO -->
+<section class="hero">
+  <div class="hero-badge"><span class="dot"></span>AI RADIO · VIBE CODING</div>
+  <div class="visualizer" id="viz"></div>
+  <h1 class="hero-title">MY <span>RADIO</span></h1>
+  <p class="hero-sub">464 首歌，4 种语言，10+ 个音乐流派<br>一个人的歌单，蒸馏成一座电台</p>
+  <div class="hero-stats">
+    <div class="hero-stat"><div class="num" style="color:var(--accent)">464</div><div class="label">首歌曲</div></div>
+    <div class="hero-stat"><div class="num" style="color:var(--green)">4</div><div class="label">种语言</div></div>
+    <div class="hero-stat"><div class="num" style="color:var(--blue)">5</div><div class="label">情绪频道</div></div>
+    <div class="hero-stat"><div class="num" style="color:var(--purple)">46</div><div class="label">位核心艺人</div></div>
+  </div>
+  <div class="hero-scroll"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 5v14M5 12l7 7 7-7"/></svg></div>
+</section>
+
+<!-- MOOD CHANNELS -->
+<section class="section fade-up">
+  <div class="section-label">CHANNELS</div>
+  <h2 class="section-title">五个情绪频道</h2>
+  <p class="section-desc">根据你的歌单数据，AI 将 464 首歌蒸馏为五条频道，对应你听歌时的不同心境</p>
+  <div class="channels stagger" id="channels"></div>
+</section>
+
+<!-- INSIGHTS -->
+<section class="section fade-up">
+  <div class="section-label">INSIGHTS</div>
+  <h2 class="section-title">你的音乐DNA</h2>
+  <p class="section-desc">AI 从歌单中提取的音乐品味画像</p>
+  <div class="insights-grid">
+    <div class="insight-card">
+      <h3><span class="emoji">🌍</span> 语言分布</h3>
+      <div class="lang-bar">
+        <div style="width:45%;background:var(--accent)"></div>
+        <div style="width:41%;background:var(--blue)"></div>
+        <div style="width:10%;background:var(--pink)"></div>
+        <div style="width:4%;background:var(--green)"></div>
+      </div>
+      <div class="lang-legend">
+        <div class="lang-item"><span class="lang-dot" style="background:var(--accent)"></span>华语 45.3% (210)</div>
+        <div class="lang-item"><span class="lang-dot" style="background:var(--blue)"></span>英语 41.2% (191)</div>
+        <div class="lang-item"><span class="lang-dot" style="background:var(--pink)"></span>日语 10.3% (48)</div>
+        <div class="lang-item"><span class="lang-dot" style="background:var(--green)"></span>韩语 1.9% (9)</div>
+      </div>
+    </div>
+    <div class="insight-card">
+      <h3><span class="emoji">🎤</span> 最爱艺人 Top 10</h3>
+      <ul class="artist-list" id="topArtists"></ul>
+    </div>
+    <div class="insight-card">
+      <h3><span class="emoji">🏷️</span> 流派标签</h3>
+      <div class="tag-cloud" id="tagCloud"></div>
+    </div>
+    <div class="insight-card">
+      <h3><span class="emoji">🧠</span> AI 品味总结</h3>
+      <div style="font-size:14px;color:var(--text2);line-height:1.8">
+        <p style="margin-bottom:12px">你的歌单呈现出一种<b style="color:var(--text)">"温柔的复杂"</b>——</p>
+        <p style="margin-bottom:12px">Core 是华语抒情与独立音乐的交织，从周杰伦到罗森涛，从王菲到 Fine 乐团，你在经典与新声之间自如切换。</p>
+        <p style="margin-bottom:12px">同时你有一副<b style="color:var(--text)">明显的日系审美</b>：RADWIMPS、GONTITI、矶村由纪子、久石让……日语曲目虽然只占 10%，但几乎都是治愈系。</p>
+        <p style="margin-bottom:12px">英语部分偏爱 <b style="color:var(--text)">Dream Pop / R&B</b> 氛围——Cigarettes After Sex 出现了 4 次，The Weeknd 和 Ariana Grande 也是常客。</p>
+        <p>整体情绪偏<b style="color:var(--accent)">深夜向</b>：独白、回忆、未说出口的话。</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- SONG LIST -->
+<section class="section fade-up">
+  <div class="section-label">PLAYLIST</div>
+  <h2 class="section-title">完整歌单</h2>
+  <p class="section-desc">点击左侧频道筛选，或搜索歌曲名/艺人名</p>
+  <div class="song-list-section">
+    <div class="song-list-header">
+      <h2><span class="emoji" id="listEmoji">🎵</span> <span id="listTitle">全部歌曲</span></h2>
+      <span class="song-count" id="songCount">464 首</span>
+    </div>
+    <div class="search-box">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.3-4.3"/></svg>
+      <input type="text" id="searchInput" placeholder="搜索歌曲或艺人...">
+    </div>
+    <div class="song-items" id="songItems"></div>
+  </div>
+</section>
+
+<div class="footer">
+  <p>Built with <span style="color:var(--accent)">♥</span> & AI · Vibe Coding</p>
+  <p style="margin-top:4px">MY RADIO — 一个人的电台</p>
+</div>
+
+<!-- PLAYER BAR -->
+<div class="player-bar" id="playerBar">
+  <div id="aplayer-container"></div>
+</div>
+<div class="player-loading" id="playerLoading">
+  <div class="spinner"></div>
+  <span>正在搜索音乐源…</span>
+</div>
+<div class="player-fallback" id="playerFallback">
+  <a id="fallbackLink" href="#" target="_blank">▶ 在网易云音乐中打开</a>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/aplayer@1.10.1/dist/APlayer.min.js"></script>
+
+<script>
+// ===== SONG DATA =====
+const songs=[
+{t:"我看着你的时候",a:"李荣浩",m:"深夜独白",z:"华语抒情"},
+{t:"如果可以",a:"韦礼安",m:"深夜独白",z:"华语抒情"},
+{t:"20 Questions",a:"磊落 / 阿尔达克",m:"独立漫游",z:"独立探索"},
+{t:"宿醉之星",a:"琥珀乐队",m:"独立漫游",z:"独立探索"},
+{t:"雪人",a:"驼儿",m:"深夜独白",z:"华语新声"},
+{t:"Would You Fall in Love with Me Again",a:"Jorge Rivera-Herrans",m:"午夜幻想",z:"百老汇之夜"},
+{t:"Puppeteer",a:"Jorge Rivera-Herrans",m:"午夜幻想",z:"百老汇之夜"},
+{t:"common love",a:"驼儿 / 说唱者联盟",m:"深夜独白",z:"华语新声"},
+{t:"在日落前拥抱",a:"尕尔东",m:"深夜独白",z:"华语新声"},
+{t:"Listen",a:"Beyoncé",m:"心动频率",z:"欧美流行"},
+{t:"Straight to the Soul",a:"Ironwood Union",m:"治愈花园",z:"独立探索"},
+{t:"blue (with MINNIE)",a:"yung kai / MINNIE",m:"治愈花园",z:"欧美流行"},
+{t:"我想和你一起",a:"温蒂漫步",m:"治愈花园",z:"独立探索"},
+{t:"误把栾花当桂花",a:"YN-K",m:"治愈花园",z:"华语新声"},
+{t:"可风",a:"黄建为",m:"治愈花园",z:"华语民谣"},
+{t:"圈套",a:"Fine乐团",m:"心动频率",z:"华语新声"},
+{t:"喜欢",a:"张悬",m:"治愈花园",z:"华语民谣"},
+{t:"我发现你",a:"Fine乐团",m:"心动频率",z:"华语新声"},
+{t:"听见下雨的声音",a:"魏如昀",m:"深夜独白",z:"华语抒情"},
+{t:"SORRY",a:"比莉",m:"深夜独白",z:"华语经典"},
+{t:"还是会想你",a:"Fine乐团",m:"深夜独白",z:"华语新声"},
+{t:"How Long, How Low?",a:"Chance Peña / Hayd",m:"治愈花园",z:"欧美流行"},
+{t:"夏夜露天电影",a:"白色海岸",m:"治愈花园",z:"华语新声"},
+{t:"歩いても 歩いても",a:"GONTITI",m:"治愈花园",z:"日系治愈"},
+{t:"Ladyfingers",a:"Ryan Gebhardt",m:"治愈花园",z:"独立探索"},
+{t:"disintegrate",a:"KMurdock Music Group",m:"独立漫游",z:"独立探索"},
+{t:"This isn't what I planned",a:"virgin cigarettes",m:"独立漫游",z:"独立探索"},
+{t:"You & I",a:"Avant",m:"心动频率",z:"R&B灵魂"},
+{t:"呼吸决定",a:"Fine乐团",m:"心动频率",z:"华语新声"},
+{t:"One Wish",a:"Ray J",m:"心动频率",z:"R&B灵魂"},
+{t:"Oh Honey",a:"Delegation",m:"心动频率",z:"R&B灵魂"},
+{t:"再次爱上你",a:"阿里郎",m:"深夜独白",z:"华语经典"},
+{t:"拆穿",a:"黄绮珊",m:"深夜独白",z:"华语抒情"},
+{t:"Gas Station Diner",a:"AGA",m:"治愈花园",z:"粤语世界"},
+{t:"Pap",a:"Kidult.",m:"独立漫游",z:"独立探索"},
+{t:"Give It Up",a:"黄玠玮",m:"治愈花园",z:"华语新声"},
+{t:"June & August",a:"GONTITI",m:"治愈花园",z:"日系治愈"},
+{t:"Nobody",a:"Charlie Jeer",m:"独立漫游",z:"独立探索"},
+{t:"Laundromat",a:"Nivea",m:"心动频率",z:"R&B灵魂"},
+{t:"I Miss You",a:"ROCOBERRY",m:"深夜独白",z:"韩系OST"},
+{t:"甜蜜的麻烦",a:"OK绷",m:"治愈花园",z:"华语新声"},
+{t:"There Goes My Baby",a:"d4vd",m:"深夜独白",z:"欧美流行"},
+{t:"Way Back Into Love",a:"Hugh Grant / Drew Barrymore",m:"心动频率",z:"电影原声"},
+{t:"One Of The Girls",a:"The Weeknd / JENNIE",m:"心动频率",z:"欧美流行"},
+{t:"Just the Way You Are",a:"Bruno Mars",m:"心动频率",z:"欧美流行"},
+{t:"嘲笑",a:"Fine乐团",m:"深夜独白",z:"华语新声"},
+{t:"Save Your Tears",a:"The Weeknd / Ariana Grande",m:"心动频率",z:"欧美流行"},
+{t:"34+35",a:"Ariana Grande",m:"心动频率",z:"欧美流行"},
+{t:"Soft Lips",a:"BlankCh3ck",m:"治愈花园",z:"独立探索"},
+{t:"Bleeding Love",a:"Ni/Co",m:"深夜独白",z:"欧美流行"},
+{t:"Next To You",a:"Charlotte Cardin",m:"治愈花园",z:"欧美流行"},
+{t:"Peaches",a:"Justin Bieber / Daniel Caesar",m:"治愈花园",z:"欧美流行"},
+{t:"爱你没差",a:"周杰伦",m:"深夜独白",z:"华语经典"},
+{t:"等你下课",a:"周杰伦 / 杨瑞代",m:"心动频率",z:"华语经典"},
+{t:"学不会",a:"林俊杰",m:"深夜独白",z:"华语抒情"},
+{t:"不该",a:"周杰伦 / 张惠妹",m:"深夜独白",z:"华语经典"},
+{t:"Shut up My Moms Calling",a:"Hotel Ugly",m:"独立漫游",z:"独立探索"},
+{t:"One More Light",a:"Linkin Park",m:"深夜独白",z:"欧美摇滚"},
+{t:"Snow Of Fate",a:"米卡",m:"治愈花园",z:"华语新声"},
+{t:"初恋旧爱新欢",a:"RAiNBOW计划 / 林力尧",m:"心动频率",z:"华语新声"},
+{t:"DREAM",a:"BABYMONSTER",m:"心动频率",z:"K-Pop"},
+{t:"I Love You 3000",a:"해리안 윤소안",m:"心动频率",z:"韩系OST"},
+{t:"time machine",a:"mj apanay / aren park",m:"治愈花园",z:"独立探索"},
+{t:"Sweet",a:"Cigarettes After Sex",m:"治愈花园",z:"梦幻流行"},
+{t:"Deadman",a:"蔡徐坤",m:"独立漫游",z:"华语新声"},
+{t:"Come Around Me",a:"Justin Bieber",m:"治愈花园",z:"欧美流行"},
+{t:"Julie.",a:"Gallant",m:"治愈花园",z:"R&B灵魂"},
+{t:"City Of Stars",a:"Ryan Gosling / Emma Stone",m:"午夜幻想",z:"电影原声"},
+{t:"矜持",a:"王菲",m:"深夜独白",z:"华语经典"},
+{t:"All I Wanna Do",a:"Kim Waters",m:"治愈花园",z:"R&B灵魂"},
+{t:"nightfall",a:"aren park",m:"深夜独白",z:"独立探索"},
+{t:"warm",a:"Ariana Grande",m:"治愈花园",z:"欧美流行"},
+{t:"watch you sleep.",a:"girl in red",m:"深夜独白",z:"独立探索"},
+{t:"Open Hearts",a:"HAEVN / Birdy",m:"治愈花园",z:"欧美流行"},
+{t:"好好说再见",a:"陶喆 / 关诗敏",m:"深夜独白",z:"华语抒情"},
+{t:"twilight zone",a:"Ariana Grande",m:"午夜幻想",z:"欧美流行"},
+{t:"过",a:"王嘉尔 / 林俊杰",m:"深夜独白",z:"华语新声"},
+{t:"I Love You So",a:"The Walters",m:"心动频率",z:"欧美流行"},
+{t:"笨蛋，混蛋",a:"陆虎 / 何洁",m:"心动频率",z:"华语新声"},
+{t:"梦中人",a:"亚森",m:"午夜幻想",z:"华语新声"},
+{t:"We Could Still Be Happy",a:"Rachael Yamagata",m:"治愈花园",z:"独立探索"},
+{t:"The Moon Song",a:"Scarlett Johansson",m:"治愈花园",z:"电影原声"},
+{t:"Comfortable",a:"Victor Ray",m:"治愈花园",z:"R&B灵魂"},
+{t:"秘闻",a:"黄誉博",m:"深夜独白",z:"华语新声"},
+{t:"躲雨",a:"Sophis",m:"治愈花园",z:"独立探索"},
+{t:"去看星星好不好",a:"陈翌朦",m:"治愈花园",z:"华语新声"},
+{t:"魔方",a:"Milie",m:"治愈花园",z:"独立探索"},
+{t:"梦话",a:"王子为",m:"深夜独白",z:"华语新声"},
+{t:"拆穿",a:"小霞",m:"深夜独白",z:"华语抒情"},
+{t:"唯一",a:"告五人",m:"心动频率",z:"华语新声"},
+{t:"はんなり",a:"ko-ko-ya",m:"治愈花园",z:"日系治愈"},
+{t:"太聪明",a:"陈绮贞",m:"深夜独白",z:"华语民谣"},
+{t:"果蝇与放坏的西柚",a:"陈越龙",m:"独立漫游",z:"华语新声"},
+{t:"Last Days",a:"吉田靖",m:"治愈花园",z:"日系治愈"},
+{t:"一格格",a:"卫兰",m:"心动频率",z:"粤语世界"},
+{t:"浴室",a:"旺仔加真露",m:"独立漫游",z:"华语新声"},
+{t:"刻在我心底的名字",a:"JulianZheng",m:"深夜独白",z:"华语抒情"},
+{t:"圣诞结",a:"陈奕迅",m:"深夜独白",z:"粤语世界"},
+{t:"River Flows In You",a:"纯音乐",m:"治愈花园",z:"钢琴冥想"},
+{t:"剪爱",a:"关喆",m:"深夜独白",z:"华语抒情"},
+{t:"III",a:"Athletics",m:"治愈花园",z:"后摇"},
+{t:"梦伴",a:"李悦君",m:"深夜独白",z:"粤语世界"},
+{t:"Begging You",a:"2LSON / 孝彬",m:"心动频率",z:"韩系OST"},
+{t:"Satisfied",a:"Renee Elise Goldsberry",m:"午夜幻想",z:"百老汇之夜"},
+{t:"Blah Blah Blah",a:"Lukie.Y",m:"独立漫游",z:"独立探索"},
+{t:"Hang on Little Tomato",a:"Pink Martini",m:"治愈花园",z:"经典爵士"},
+{t:"missing you",a:"Sevn Dayz",m:"深夜独白",z:"独立探索"},
+{t:"If I Ain't Got You",a:"Brandon Victor Dixon",m:"深夜独白",z:"R&B灵魂"},
+{t:"Hideaway",a:"Cigarettes After Sex",m:"治愈花园",z:"梦幻流行"},
+{t:"和你",a:"余佳运",m:"心动频率",z:"华语新声"},
+{t:"当两颗心",a:"罗森涛",m:"心动频率",z:"华语新声"},
+{t:"迷雾女士",a:"杨楚骁",m:"午夜幻想",z:"华语新声"},
+{t:"小孩",a:"罗森涛",m:"深夜独白",z:"华语新声"},
+{t:"我最喜欢冷天气",a:"DeeZoo",m:"治愈花园",z:"华语新声"},
+{t:"a song for love",a:"春畑道哉",m:"治愈花园",z:"日系治愈"},
+{t:"江湖",a:"鲸鱼马戏团",m:"治愈花园",z:"后摇"},
+{t:"凉夜窗情",a:"小虫",m:"深夜独白",z:"华语经典"},
+{t:"Billie Jean",a:"青山黛玛",m:"心动频率",z:"日系治愈"},
+{t:"恢弘的大梦",a:"鲸鱼马戏团",m:"治愈花园",z:"后摇"},
+{t:"Deep Green",a:"Christian Kuria",m:"治愈花园",z:"独立探索"},
+{t:"晚安",a:"鹿先森乐队",m:"治愈花园",z:"华语民谣"},
+{t:"荒漠上行走",a:"亚森",m:"独立漫游",z:"华语新声"},
+{t:"春日小径花园",a:"Furyl",m:"治愈花园",z:"独立探索"},
+{t:"I Wish",a:"Faime",m:"治愈花园",z:"独立探索"},
+{t:"进入你梦里",a:"银河快递",m:"午夜幻想",z:"华语新声"},
+{t:"不会太难",a:"丁祾",m:"深夜独白",z:"华语新声"},
+{t:"Falling In Love",a:"Cigarettes After Sex",m:"治愈花园",z:"梦幻流行"},
+{t:"为何离开",a:"罗森涛",m:"深夜独白",z:"华语新声"},
+{t:"Dehors",a:"Jordann",m:"治愈花园",z:"独立探索"},
+{t:"轻不着地",a:"before the night ends",m:"治愈花园",z:"华语新声"},
+{t:"山路",a:"怪豆儿 / 李璟崎",m:"治愈花园",z:"华语新声"},
+{t:"五官",a:"闫泽欢",m:"独立漫游",z:"华语新声"},
+{t:"Pines",a:"Men I Trust",m:"治愈花园",z:"梦幻流行"},
+{t:"污水塘",a:"惘闻",m:"独立漫游",z:"后摇"},
+{t:"pine cone",a:"金車厘子",m:"治愈花园",z:"华语新声"},
+{t:"Doin Nothing",a:"Seth Liane",m:"治愈花园",z:"独立探索"},
+{t:"Just Take Me in Your Arms",a:"Alfonso De Vilallonga",m:"治愈花园",z:"独立探索"},
+{t:"Defrosting Song",a:"Alfonso De Vilallonga",m:"治愈花园",z:"独立探索"},
+{t:"Let's Get The Mood Right",a:"Johnny Gill",m:"心动频率",z:"R&B灵魂"},
+{t:"Fallin' Out",a:"Keyshia Cole",m:"深夜独白",z:"R&B灵魂"},
+{t:"渐近自由",a:"熊猫堂",m:"心动频率",z:"华语新声"},
+{t:"Tejano Blue",a:"Cigarettes After Sex",m:"治愈花园",z:"梦幻流行"},
+{t:"Thirsty",a:"Geoffroy / Men I Trust",m:"治愈花园",z:"梦幻流行"},
+{t:"Hush",a:"The Marías",m:"治愈花园",z:"独立探索"},
+{t:"Done for Me",a:"Charlie Puth / Kehlani",m:"心动频率",z:"欧美流行"},
+{t:"低度酒摄入陷阱",a:"猫仙人",m:"独立漫游",z:"华语新声"},
+{t:"Shadow Room",a:"Brian Cheng",m:"独立漫游",z:"华语新声"},
+{t:"Always",a:"Daniel Caesar",m:"治愈花园",z:"R&B灵魂"},
+{t:"Cruisin'",a:"Sioen",m:"治愈花园",z:"独立探索"},
+{t:"Not My Neighbour",a:"Niko Walters",m:"治愈花园",z:"独立探索"},
+{t:"黑色静态",a:"杨瑞代 / Lara梁心颐",m:"午夜幻想",z:"华语新声"},
+{t:"月光",a:"杨瑞代 / 周杰伦",m:"深夜独白",z:"华语经典"},
+{t:"Freezing",a:"syd B",m:"深夜独白",z:"独立探索"},
+{t:"Annie's Vision",a:"Green Pitch",m:"治愈花园",z:"独立探索"},
+{t:"Wake Up Call",a:"Mel Blue",m:"独立漫游",z:"独立探索"},
+{t:"漫步香港1999",a:"白浩贤",m:"治愈花园",z:"粤语世界"},
+{t:"Worship",a:"Ari Abdul",m:"独立漫游",z:"独立探索"},
+{t:"the boy is mine",a:"Brown Eyed Girl",m:"心动频率",z:"K-Pop"},
+{t:"Whiskey and Morphine",a:"Alexander Jean",m:"深夜独白",z:"独立探索"},
+{t:"Wish",a:"魏诗莹",m:"治愈花园",z:"华语新声"},
+{t:"Doors",a:"Us The Duo",m:"心动频率",z:"欧美流行"},
+{t:"游荡的人",a:"好乐团 / 李玖哲",m:"独立漫游",z:"华语新声"},
+{t:"4ever",a:"Elhé / gabby parafina",m:"治愈花园",z:"独立探索"},
+{t:"different",a:"leejean",m:"独立漫游",z:"华语新声"},
+{t:"Earned It",a:"The Weeknd",m:"心动频率",z:"欧美流行"},
+{t:"Set for Life",a:"Trent Dabbs",m:"治愈花园",z:"独立探索"},
+{t:"Too Sweet",a:"Hozier",m:"治愈花园",z:"欧美流行"},
+{t:"vampire",a:"Olivia Rodrigo",m:"独立漫游",z:"欧美流行"},
+{t:"Float",a:"Olivia Dean",m:"治愈花园",z:"欧美流行"},
+{t:"Delectable",a:"Lindsxy Mesenburg",m:"治愈花园",z:"独立探索"},
+{t:"虹",a:"Brian Cheng",m:"独立漫游",z:"华语新声"},
+{t:"Mushroom",a:"Brian Cheng",m:"独立漫游",z:"华语新声"},
+{t:"聪明不聪明",a:"丁世光",m:"心动频率",z:"华语新声"},
+{t:"Waiting Is A Waste",a:"Mina Okabe",m:"治愈花园",z:"独立探索"},
+{t:"小师妹",a:"丁世光",m:"心动频率",z:"华语新声"},
+{t:"Rain Watcher",a:"惘闻",m:"治愈花园",z:"后摇"},
+{t:"Van Gogh",a:"Virginio Aiello",m:"治愈花园",z:"钢琴冥想"},
+{t:"her shadow",a:"Thomas Ng",m:"深夜独白",z:"独立探索"},
+{t:"I'm Not a Gentleman",a:"杨瑞代",m:"独立漫游",z:"华语新声"},
+{t:"One Last Dance",a:"Us The Duo",m:"心动频率",z:"欧美流行"},
+{t:"Lonely God",a:"惘闻",m:"独立漫游",z:"后摇"},
+{t:"散步",a:"张荣昊",m:"治愈花园",z:"华语新声"},
+{t:"Rest Assured",a:"Jeff Bernat",m:"治愈花园",z:"R&B灵魂"},
+{t:"我在等你按下播放键",a:"莫非定律乐团",m:"深夜独白",z:"华语新声"},
+{t:"打上花火",a:"Daoko / 米津玄師",m:"午夜幻想",z:"日系治愈"},
+{t:"Simon",a:"丁世光",m:"心动频率",z:"华语新声"},
+{t:"Costa da Caparica",a:"RIOPY",m:"治愈花园",z:"钢琴冥想"},
+{t:"Duet",a:"Rachael Yamagata",m:"心动频率",z:"独立探索"},
+{t:"Puppy",a:"Charlotte Cardin",m:"心动频率",z:"欧美流行"},
+{t:"台北车站",a:"飞石号",m:"治愈花园",z:"华语新声"},
+{t:"心慌",a:"邓见超",m:"心动频率",z:"华语新声"},
+{t:"Language",a:"Fintan",m:"治愈花园",z:"独立探索"},
+{t:"Happy Valentine",a:"曹格",m:"心动频率",z:"华语抒情"},
+{t:"Daisy",a:"Perry Pluto",m:"治愈花园",z:"独立探索"},
+{t:"深秋",a:"邓见超",m:"深夜独白",z:"华语新声"},
+{t:"阳光下的星星",a:"金海心",m:"治愈花园",z:"华语经典"},
+{t:"춥다 IT'S COLD",a:"Epik High / 李遐怡",m:"深夜独白",z:"韩系OST"},
+{t:"两人雨天",a:"宇宙人",m:"治愈花园",z:"华语新声"},
+{t:"可是你啊",a:"孟慧圆",m:"心动频率",z:"华语新声"},
+{t:"All about Anna",a:"昨夜派对",m:"心动频率",z:"华语新声"},
+{t:"词不达意",a:"林忆莲",m:"深夜独白",z:"华语抒情"},
+{t:"寂寞先生",a:"曹格",m:"深夜独白",z:"华语抒情"},
+{t:"Illusion",a:"DEN",m:"午夜幻想",z:"独立探索"},
+{t:"雨和我们拥抱在一起",a:"白色海岸",m:"治愈花园",z:"华语新声"},
+{t:"Be Be Your Love",a:"Rachael Yamagata",m:"心动频率",z:"独立探索"},
+{t:"Drive",a:"RIOPY",m:"治愈花园",z:"钢琴冥想"},
+{t:"Wyden Down",a:"RIOPY",m:"治愈花园",z:"钢琴冥想"},
+{t:"沃尔塔瓦河",a:"捷克爱乐乐团",m:"治愈花园",z:"古典跨界"},
+{t:"Lovesong",a:"Adele",m:"深夜独白",z:"欧美流行"},
+{t:"Landing Guy",a:"刘昊霖 / Kidult.",m:"治愈花园",z:"华语民谣"},
+{t:"白",a:"明天周六",m:"治愈花园",z:"华语新声"},
+{t:"A Rocket to the Moon",a:"GAVIN:D",m:"治愈花园",z:"独立探索"},
+{t:"I Don't Know You",a:"Noni",m:"独立漫游",z:"独立探索"},
+{t:"Alla ögon på mig",a:"Darin",m:"心动频率",z:"欧美流行"},
+{t:"Melody",a:"陶喆",m:"心动频率",z:"华语经典"},
+{t:"回忆的沙漏",a:"G.E.M. 邓紫棋",m:"深夜独白",z:"华语抒情"},
+{t:"怎么会忘记你",a:"王赫野 / 希林娜依高",m:"心动频率",z:"华语新声"},
+{t:"Lullaby",a:"Enzalla",m:"治愈花园",z:"独立探索"},
+{t:"passion",a:"barnes blvd.",m:"治愈花园",z:"独立探索"},
+{t:"消亡史",a:"陈婧霏",m:"午夜幻想",z:"华语新声"},
+{t:"Lie",a:"Sasha Alex Sloan",m:"深夜独白",z:"欧美流行"},
+{t:"苹果",a:"廖俊涛",m:"深夜独白",z:"华语新声"},
+{t:"失语者",a:"蔡健雅",m:"深夜独白",z:"华语抒情"},
+{t:"Month",a:"乃万",m:"独立漫游",z:"华语新声"},
+{t:"Glimpse of Us",a:"Joji",m:"深夜独白",z:"欧美流行"},
+{t:"Heaven",a:"Julia Michaels",m:"治愈花园",z:"欧美流行"},
+{t:"I'm Not The Only One",a:"Sam Smith",m:"深夜独白",z:"欧美流行"},
+{t:"原谅 I",a:"张玉华",m:"深夜独白",z:"华语抒情"},
+{t:"BABYDOLL",a:"Ari Abdul",m:"独立漫游",z:"独立探索"},
+{t:"Leave The Door Open",a:"Leroy Sanchez",m:"心动频率",z:"欧美流行"},
+{t:"주저하는 연인들을 위해",a:"JANNABI",m:"治愈花园",z:"韩系OST"},
+{t:"深蓝",a:"陈婧霏",m:"午夜幻想",z:"华语新声"},
+{t:"转身以后",a:"小男孩乐团",m:"心动频率",z:"华语新声"},
+{t:"As It Was",a:"PREP",m:"治愈花园",z:"欧美流行"},
+{t:"原谅",a:"王琪玮",m:"深夜独白",z:"华语新声"},
+{t:"瞬间",a:"G.E.M. 邓紫棋",m:"心动频率",z:"华语抒情"},
+{t:"If We Ever Broke Up",a:"Mae Stephens",m:"心动频率",z:"欧美流行"},
+{t:"Dancing With A Stranger",a:"Sam Smith / Normani",m:"心动频率",z:"欧美流行"},
+{t:"都不懂",a:"step.jad依加",m:"深夜独白",z:"华语新声"},
+{t:"Blue Jay",a:"ZUHAIR / Jah Loon",m:"治愈花园",z:"独立探索"},
+{t:"Die For You",a:"The Weeknd / Ariana Grande",m:"心动频率",z:"欧美流行"},
+{t:"Where Did U Go",a:"G.E.M. 邓紫棋",m:"深夜独白",z:"华语抒情"},
+{t:"温柔",a:"五月天 / 孙燕姿",m:"深夜独白",z:"华语经典"},
+{t:"Paris In The Rain",a:"Lauv",m:"治愈花园",z:"欧美流行"},
+{t:"ROSS AND RACHEL",a:"Jake Miller",m:"心动频率",z:"欧美流行"},
+{t:"别问很可怕",a:"J.Sheon",m:"心动频率",z:"华语新声"},
+{t:"我记得",a:"赵雷",m:"治愈花园",z:"华语民谣"},
+{t:"在你的身边",a:"盛哲",m:"治愈花园",z:"华语新声"},
+{t:"永远都会在",a:"旅行团乐队",m:"治愈花园",z:"华语新声"},
+{t:"A Thousand Years",a:"Jada Facer",m:"心动频率",z:"欧美流行"},
+{t:"7 Years",a:"Lukas Graham",m:"治愈花园",z:"欧美流行"},
+{t:"柳叶笺",a:"朱彦安 / 张诗莉",m:"治愈花园",z:"华语新声"},
+{t:"GHOST",a:"Tielle",m:"深夜独白",z:"独立探索"},
+{t:"微光",a:"袁野夕",m:"治愈花园",z:"华语新声"},
+{t:"窃笑",a:"魏如萱",m:"治愈花园",z:"华语新声"},
+{t:"路过",a:"袁野夕",m:"治愈花园",z:"华语新声"},
+{t:"数星星",a:"StrawberryPapa",m:"治愈花园",z:"华语新声"},
+{t:"青苔",a:"莫非定律乐团",m:"治愈花园",z:"华语新声"},
+{t:"Why Don't You Stay",a:"Jeff Satur",m:"心动频率",z:"欧美流行"},
+{t:"Limbs of Faith",a:"Beauvois",m:"治愈花园",z:"后摇"},
+{t:"Fly Me to the Moon",a:"The Macarons Project",m:"心动频率",z:"经典爵士"},
+{t:"Ferrari",a:"Bebe Rexha",m:"心动频率",z:"欧美流行"},
+{t:"喜欢",a:"李大奔",m:"心动频率",z:"华语新声"},
+{t:"安静的你",a:"Kirsty刘瑾睿",m:"治愈花园",z:"华语新声"},
+{t:"Wildest Dreams",a:"Anthem Lights",m:"午夜幻想",z:"欧美流行"},
+{t:"Afterglow",a:"Leroy Sanchez",m:"治愈花园",z:"欧美流行"},
+{t:"Like a Song",a:"Anthony Lazaro",m:"治愈花园",z:"独立探索"},
+{t:"Nice to Meet You",a:"AMnesiac安尼西亚",m:"治愈花园",z:"华语新声"},
+{t:"Fade",a:"Jeff Satur",m:"治愈花园",z:"欧美流行"},
+{t:"Green Book",a:"Ghostly Kisses",m:"治愈花园",z:"梦幻流行"},
+{t:"Bloody Mary Girl",a:"She Her Her Hers",m:"独立漫游",z:"日系治愈"},
+{t:"成都",a:"赵雷",m:"治愈花园",z:"华语民谣"},
+{t:"Dancing with my phone",a:"HYBS",m:"治愈花园",z:"独立探索"},
+{t:"霍乱时期的爱情",a:"向日葵乐队",m:"深夜独白",z:"华语新声"},
+{t:"彗星",a:"白鲨JAWS",m:"心动频率",z:"华语新声"},
+{t:"新的心跳",a:"G.E.M. 邓紫棋",m:"心动频率",z:"华语抒情"},
+{t:"后来的我们",a:"五月天",m:"深夜独白",z:"华语经典"},
+{t:"后会无期",a:"G.E.M. 邓紫棋",m:"深夜独白",z:"华语抒情"},
+{t:"仰望星空",a:"张杰",m:"治愈花园",z:"华语经典"},
+{t:"夏夜芦苇",a:"NoSleep Child",m:"治愈花园",z:"华语新声"},
+{t:"囹圄",a:"姜没",m:"深夜独白",z:"华语新声"},
+{t:"几分之几",a:"卢广仲",m:"治愈花园",z:"华语民谣"},
+{t:"兜转",a:"陈势安",m:"深夜独白",z:"华语抒情"},
+{t:"苦橙",a:"RAiNBOW计划 / 林力尧",m:"治愈花园",z:"华语新声"},
+{t:"无话可说",a:"张洢豪",m:"深夜独白",z:"华语新声"},
+{t:"多远都要在一起",a:"G.E.M. 邓紫棋",m:"心动频率",z:"华语抒情"},
+{t:"你啊你啊",a:"魏如萱",m:"治愈花园",z:"华语新声"},
+{t:"先说谎的人",a:"h3R3 / 张鑫",m:"深夜独白",z:"华语新声"},
+{t:"不要想太多",a:"郭顶",m:"治愈花园",z:"华语新声"},
+{t:"Home",a:"Peder Elias",m:"治愈花园",z:"欧美流行"},
+{t:"Darkness around",a:"Jonas David",m:"深夜独白",z:"独立探索"},
+{t:"Growing Pains",a:"Nathan Trent",m:"治愈花园",z:"欧美流行"},
+{t:"可是爱最为致命",a:"莫非定律乐团",m:"深夜独白",z:"华语新声"},
+{t:"太空",a:"吴青峰",m:"午夜幻想",z:"华语经典"},
+{t:"飞鸟",a:"枯木逢春 / 尚士达",m:"治愈花园",z:"华语民谣"},
+{t:"你是秋天晚上的月亮",a:"周三七",m:"治愈花园",z:"华语新声"},
+{t:"当我望着你",a:"鹿洐人",m:"心动频率",z:"华语新声"},
+{t:"好不容易",a:"告五人",m:"心动频率",z:"华语新声"},
+{t:"What If I Wasn't Done Loving You?",a:"Fly By Midnight",m:"心动频率",z:"欧美流行"},
+{t:"你瞒我瞒",a:"陈柏宇",m:"深夜独白",z:"粤语世界"},
+{t:"旅行中忘记",a:"蔻晴",m:"深夜独白",z:"华语新声"},
+{t:"麻醉师",a:"胡睿",m:"深夜独白",z:"华语新声"},
+{t:"玫瑰少年",a:"五月天",m:"心动频率",z:"华语经典"},
+{t:"Strawberries & Cigarettes",a:"Troye Sivan",m:"治愈花园",z:"欧美流行"},
+{t:"谁",a:"廖俊涛",m:"深夜独白",z:"华语新声"},
+{t:"云泥",a:"贺子轩",m:"深夜独白",z:"华语新声"},
+{t:"同花顺",a:"林倛玉",m:"深夜独白",z:"华语抒情"},
+{t:"デート",a:"RADWIMPS",m:"心动频率",z:"日系治愈"},
+{t:"刻在我心底的名字",a:"卢广仲",m:"深夜独白",z:"华语民谣"},
+{t:"你幸福吗？",a:"胡鸿钧",m:"深夜独白",z:"粤语世界"},
+{t:"Shangri-La Is Calling",a:"椅子乐团",m:"治愈花园",z:"华语新声"},
+{t:"后来的灯火",a:"醒山",m:"独立漫游",z:"华语新声"},
+{t:"再见迪曼",a:"马良",m:"深夜独白",z:"华语民谣"},
+{t:"就让我坠入海底",a:"Sunken Boat沉舟乐队",m:"深夜独白",z:"华语新声"},
+{t:"向告别飞驰吧",a:"昨夜派对",m:"独立漫游",z:"华语新声"},
+{t:"California",a:"Ridgely",m:"治愈花园",z:"欧美流行"},
+{t:"走入有雾的森林",a:"Cicada",m:"治愈花园",z:"后摇"},
+{t:"华年",a:"鹿先森乐队",m:"治愈花园",z:"华语民谣"},
+{t:"Magnolia",a:"Nyah Grace",m:"治愈花园",z:"欧美流行"},
+{t:"Villanelle",a:"Jo Blankenburg",m:"治愈花园",z:"钢琴冥想"},
+{t:"Paul",a:"Cavetown",m:"治愈花园",z:"独立探索"},
+{t:"约会在星期天晚上",a:"莫非定律乐团",m:"心动频率",z:"华语新声"},
+{t:"晚风",a:"陈婧霏",m:"治愈花园",z:"华语新声"},
+{t:"Mia Hates Jazz",a:"Justin Hurwitz",m:"午夜幻想",z:"电影原声"},
+{t:"City Of Stars (Humming)",a:"Justin Hurwitz",m:"午夜幻想",z:"电影原声"},
+{t:"Yellow",a:"Coldplay",m:"治愈花园",z:"欧美摇滚"},
+{t:"我是如此相信",a:"周杰伦",m:"治愈花园",z:"华语经典"},
+{t:"You Are Not Alone",a:"Michael Jackson",m:"治愈花园",z:"欧美经典"},
+{t:"追风",a:"郭一凡",m:"治愈花园",z:"华语新声"},
+{t:"有我呢",a:"郭一凡",m:"治愈花园",z:"华语新声"},
+{t:"这世界那么多人",a:"莫文蔚",m:"深夜独白",z:"华语抒情"},
+{t:"The Reason",a:"Hoobastank",m:"治愈花园",z:"欧美摇滚"},
+{t:"桥豆麻袋",a:"陈粒",m:"治愈花园",z:"华语民谣"},
+{t:"Dear Mary",a:"悶餅MOONBAND",m:"心动频率",z:"华语新声"},
+{t:"晴天",a:"周杰伦",m:"心动频率",z:"华语经典"},
+{t:"野子",a:"苏运莹",m:"心动频率",z:"华语新声"},
+{t:"房间",a:"刘瑞琦",m:"治愈花园",z:"华语新声"},
+{t:"起风了",a:"周深",m:"治愈花园",z:"华语新声"},
+{t:"Careless Whisper",a:"Sam Levine",m:"治愈花园",z:"经典爵士"},
+{t:"Easily",a:"Bruno Major",m:"心动频率",z:"欧美流行"},
+{t:"Falling Slowly",a:"Glen Hansard",m:"深夜独白",z:"电影原声"},
+{t:"再谈记忆",a:"盘尼西林乐队",m:"心动频率",z:"华语新声"},
+{t:"Shape Of My Heart",a:"Sting",m:"治愈花园",z:"欧美经典"},
+{t:"白玫瑰",a:"陈奕迅",m:"深夜独白",z:"粤语世界"},
+{t:"走马",a:"陈粒",m:"治愈花园",z:"华语民谣"},
+{t:"绝对占有 相对自由",a:"陈粒",m:"独立漫游",z:"华语民谣"},
+{t:"明年今日",a:"陈奕迅",m:"深夜独白",z:"粤语世界"},
+{t:"Dancing With Your Ghost",a:"Sasha Alex Sloan",m:"深夜独白",z:"欧美流行"},
+{t:"纯洁2016",a:"木马",m:"独立漫游",z:"华语新声"},
+{t:"Gravity",a:"郑成河",m:"治愈花园",z:"钢琴冥想"},
+{t:"All in a Daydream",a:"Snigellin",m:"治愈花园",z:"独立探索"},
+{t:"富士山下",a:"陈奕迅",m:"深夜独白",z:"粤语世界"},
+{t:"我好想你",a:"苏打绿",m:"深夜独白",z:"华语经典"},
+{t:"二人の帰り道",a:"GIN",m:"治愈花园",z:"日系治愈"},
+{t:"Monsters",a:"Katie Sky",m:"午夜幻想",z:"欧美流行"},
+{t:"Ascent",a:"Peter Kater",m:"治愈花园",z:"钢琴冥想"},
+{t:"恋をしたのは",a:"aiko",m:"心动频率",z:"日系治愈"},
+{t:"一路向北",a:"周杰伦",m:"深夜独白",z:"华语经典"},
+{t:"夏バテ",a:"aiko",m:"治愈花园",z:"日系治愈"},
+{t:"夢灯籠",a:"RADWIMPS",m:"午夜幻想",z:"日系治愈"},
+{t:"Forever Friends",a:"Daoko",m:"心动频率",z:"日系治愈"},
+{t:"不潮不用花钱",a:"林俊杰",m:"心动频率",z:"华语抒情"},
+{t:"水星记",a:"郭顶",m:"深夜独白",z:"华语新声"},
+{t:"不要说话",a:"陈奕迅",m:"深夜独白",z:"粤语世界"},
+{t:"保留",a:"郭顶",m:"治愈花园",z:"华语新声"},
+{t:"从你的全世界路过",a:"UlyseL",m:"治愈花园",z:"独立探索"},
+{t:"Take Me Hand",a:"DAISHI DANCE",m:"治愈花园",z:"日系治愈"},
+{t:"献给爱丽丝",a:"Richard Clayderman",m:"治愈花园",z:"古典跨界"},
+{t:"海底",a:"袁子希",m:"深夜独白",z:"华语新声"},
+{t:"盛夏的舞",a:"Heyo / 卫诗",m:"心动频率",z:"粤语世界"},
+{t:"爱与诚",a:"古巨基",m:"深夜独白",z:"粤语世界"},
+{t:"爱，存在",a:"王靖雯",m:"心动频率",z:"华语新声"},
+{t:"Hotel California",a:"Eagles",m:"独立漫游",z:"欧美摇滚"},
+{t:"風の住む街",a:"矶村由纪子",m:"治愈花园",z:"日系治愈"},
+{t:"死在旋转公寓",a:"发光曲线",m:"独立漫游",z:"华语新声"},
+{t:"小情歌",a:"苏打绿",m:"心动频率",z:"华语经典"},
+{t:"春天交响曲",a:"苏慧伦",m:"治愈花园",z:"华语经典"},
+{t:"甜甜的",a:"周杰伦",m:"心动频率",z:"华语经典"},
+{t:"月のナミダ",a:"押尾光太郎",m:"治愈花园",z:"日系治愈"},
+{t:"Summer",a:"久石让",m:"治愈花园",z:"钢琴冥想"},
+{t:"スパークル",a:"RADWIMPS",m:"午夜幻想",z:"日系治愈"},
+{t:"Fish In The Pool",a:"岩井俊二",m:"治愈花园",z:"日系治愈"},
+{t:"三葉のテーマ",a:"RADWIMPS",m:"午夜幻想",z:"日系治愈"},
+{t:"コネクト",a:"触手猴",m:"治愈花园",z:"钢琴冥想"},
+{t:"Cry for the moon",a:"出羽良彰",m:"治愈花园",z:"日系治愈"},
+{t:"なんでもないや",a:"RADWIMPS",m:"治愈花园",z:"日系治愈"},
+{t:"もののけ姫",a:"日本群星",m:"治愈花园",z:"日系治愈"},
+{t:"瑠璃色の地球",a:"手嶌葵",m:"治愈花园",z:"日系治愈"},
+{t:"Kan Inte Saga Nej",a:"Veronica Maggio",m:"治愈花园",z:"独立探索"},
+{t:"光",a:"陈粒",m:"治愈花园",z:"华语民谣"},
+{t:"开往春天的地铁",a:"方便便",m:"治愈花园",z:"华语新声"},
+{t:"Lonely Day",a:"Jurrivh",m:"深夜独白",z:"独立探索"},
+{t:"城南花已开",a:"三亩地",m:"治愈花园",z:"钢琴冥想"},
+{t:"IF YOU",a:"BIGBANG",m:"深夜独白",z:"K-Pop"},
+{t:"Rain after Summer",a:"羽肿",m:"治愈花园",z:"独立探索"},
+{t:"月半小夜曲",a:"李克勤",m:"治愈花园",z:"粤语世界"},
+{t:"告白之夜",a:"小蓝帽",m:"午夜幻想",z:"日系治愈"},
+{t:"月光曲",a:"Classical Artists",m:"治愈花园",z:"古典跨界"},
+{t:"LA VIE EN ROSE",a:"小野丽莎",m:"治愈花园",z:"日系治愈"},
+{t:"虚拟",a:"陈粒",m:"治愈花园",z:"华语民谣"},
+{t:"青石巷",a:"魏琮霏",m:"治愈花园",z:"华语民谣"},
+{t:"Something In The Rain",a:"Rachael Yamagata",m:"治愈花园",z:"独立探索"},
+{t:"记得",a:"林俊杰",m:"深夜独白",z:"华语抒情"},
+{t:"她说",a:"林俊杰",m:"深夜独白",z:"华语抒情"},
+{t:"夜空中最亮的星",a:"逃跑计划",m:"治愈花园",z:"华语新声"},
+{t:"芳草地",a:"陈粒",m:"治愈花园",z:"华语民谣"},
+{t:"Down",a:"Marian Hill",m:"治愈花园",z:"欧美流行"},
+{t:"小半",a:"陈粒",m:"治愈花园",z:"华语民谣"},
+{t:"This Love",a:"Maroon 5",m:"心动频率",z:"欧美流行"},
+{t:"The Destruction of Laputa",a:"久石让",m:"治愈花园",z:"钢琴冥想"},
+{t:"醉赤壁",a:"林俊杰",m:"治愈花园",z:"华语抒情"},
+{t:"模特",a:"李荣浩",m:"治愈花园",z:"华语抒情"},
+{t:"繋ぎとめた世界",a:"帆足圭吾",m:"治愈花园",z:"日系治愈"},
+{t:"いのちの名前",a:"广桥真纪子",m:"治愈花园",z:"日系治愈"},
+{t:"幻昼",a:"MayPiano",m:"治愈花园",z:"钢琴冥想"},
+{t:"Flower",a:"恶梦Yk / 大喜",m:"治愈花园",z:"独立探索"},
+{t:"Lemon",a:"米津玄師",m:"治愈花园",z:"日系治愈"},
+{t:"浪费",a:"林宥嘉 / 郁可唯",m:"深夜独白",z:"华语抒情"},
+{t:"心做し",a:"majiko",m:"深夜独白",z:"日系治愈"},
+{t:"白雪",a:"KOKIA",m:"治愈花园",z:"日系治愈"},
+{t:"核：冬夜的第一支歌",a:"昨夜派对",m:"治愈花园",z:"华语新声"},
+{t:"In the Mood for Love",a:"梅林茂",m:"午夜幻想",z:"钢琴冥想"},
+{t:"Kirameki",a:"RADWIMPS",m:"午夜幻想",z:"日系治愈"},
+{t:"Nandemonaiya",a:"RADWIMPS",m:"治愈花园",z:"日系治愈"},
+{t:"Is There Still Anything That Love Can Do",a:"RADWIMPS",m:"午夜幻想",z:"日系治愈"},
+];
+
+// Deduplicate
+const seen=new Set();
+const unique=songs.filter(s=>{
+  const k=s.t+'|'+s.a;
+  if(seen.has(k))return false;
+  seen.add(k);return true;
+});
+const totalSongs=unique.length;
+
+// ===== CHANNEL DATA =====
+const channels=[
+  {id:"治愈花园",emoji:"🌿",color:"#22c55e",desc:"最丰盛的频道。Cigarettes After Sex 的梦幻声场、RIOPY 的钢琴冥想、日系治愈系的温柔包裹——适合放空、散步、下雨天。",keywords:["治愈","放松","安静"]},
+  {id:"深夜独白",emoji:"🌙",color:"#a855f7",desc:"陈奕迅的遗憾、王菲的矜持、周杰伦的暗恋。这些歌属于凌晨两点、关灯之后、发呆的窗前。",keywords:["深夜","独白","回忆"]},
+  {id:"心动频率",emoji:"💓",color:"#f97316",desc:"Fine乐团的甜蜜、Ariana Grande 的律动、The Weeknd 的暧昧。心跳加速时的BGM。",keywords:["心动","甜蜜","恋爱"]},
+  {id:"午夜幻想",emoji:"✨",color:"#ec4899",desc:"RADWIMPS 的宇宙、电影原声的浪漫、百老汇的戏剧张力。闭上眼睛，坠入另一个世界。",keywords:["幻想","电影","梦幻"]},
+  {id:"独立漫游",emoji:"🚶",color:"#3b82f6",desc:"惘闻的后摇荒原、Brian Cheng 的迷幻实验、小众独立探索者的精神角落。",keywords:["独立","探索","漫游"]},
+];
+
+// ===== TOP ARTISTS =====
+const artistMap={};
+unique.forEach(s=>{
+  s.a.split(' / ').forEach(a=>{
+    a=a.trim();if(a)artistMap[a]=(artistMap[a]||0)+1;
+  });
+});
+const top10=Object.entries(artistMap).sort((a,b)=>b[1]-a[1]).slice(0,10);
+
+// ===== TAGS =====
+const zoneSet=new Set(unique.map(s=>s.z));
+const allTags=[...zoneSet].sort();
+
+// ===== RENDER =====
+function renderViz(){
+  const c=document.getElementById('viz');
+  for(let i=0;i<32;i++){
+    const bar=document.createElement('div');
+    bar.className='bar';
+    bar.style.setProperty('--h',Math.random()*40+10+'px');
+    bar.style.animationDelay=i*0.05+'s';
+    c.appendChild(bar);
+  }
+}
+
+function renderChannels(){
+  const c=document.getElementById('channels');
+  channels.forEach((ch,i)=>{
+    const count=unique.filter(s=>s.m===ch.id).length;
+    const div=document.createElement('div');
+    div.className='channel';
+    div.style.setProperty('--ch-color',ch.color);
+    div.innerHTML=`
+      <div class="channel-icon">${ch.emoji}</div>
+      <div class="channel-name">${ch.id}</div>
+      <div class="channel-desc">${ch.desc}</div>
+      <div class="channel-count"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 18V5l12-2v13"/><circle cx="6" cy="18" r="3"/><circle cx="18" cy="16" r="3"/></svg>${count} 首</div>
+    `;
+    div.addEventListener('click',()=>{
+      document.querySelectorAll('.channel').forEach(el=>el.classList.remove('active'));
+      div.classList.add('active');
+      filterByMood(ch.id);
+      document.getElementById('listEmoji').textContent=ch.emoji;
+      document.getElementById('listTitle').textContent=ch.id;
+    });
+    c.appendChild(div);
+    setTimeout(()=>div.classList.add('visible'),i*120+200);
+  });
+}
+
+function renderArtists(){
+  const ul=document.getElementById('topArtists');
+  top10.forEach(([name,cnt],i)=>{
+    const colors=['var(--accent)','var(--green)','var(--blue)'];
+    const li=document.createElement('li');
+    li.innerHTML=`<span class="name">${i+1}. ${name}</span><span class="cnt">${cnt} 首</span>`;
+    ul.appendChild(li);
+  });
+}
+
+function renderTags(){
+  const c=document.getElementById('tagCloud');
+  allTags.forEach(tag=>{
+    const span=document.createElement('span');
+    span.className='tag';
+    span.textContent=tag;
+    span.addEventListener('click',()=>{
+      document.getElementById('searchInput').value=tag;
+      filterSongs(tag);
+      document.querySelectorAll('.channel').forEach(el=>el.classList.remove('active'));
+      document.getElementById('listEmoji').textContent='🏷️';
+      document.getElementById('listTitle').textContent=tag;
+    });
+    c.appendChild(span);
+  });
+}
+
+function renderSongs(list){
+  const c=document.getElementById('songItems');
+  c.innerHTML='';
+  document.getElementById('songCount').textContent=list.length+' 首';
+  if(!list.length){
+    c.innerHTML='<div class="empty-state"><div class="emoji">🔍</div><p>没有找到匹配的歌曲</p></div>';
+    return;
+  }
+  list.forEach((s,i)=>{
+    const div=document.createElement('div');
+    div.className='song-item';
+    div.innerHTML=`
+      <span class="idx">${i+1}</span>
+      <div class="info"><div class="title">${s.t}</div><div class="artist">${s.a}</div></div>
+      <span class="mood-tag">${s.m}</span>
+      <div class="play-btn"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7z"/></svg></div>
+    `;
+    div.addEventListener('click',()=>{
+      playSong(s.t, s.a);
+    });
+    c.appendChild(div);
+  });
+}
+
+// ===== MUSIC PLAYER =====
+let ap = null;
+const songUrlCache = {};
+
+function showPlayerBar() {
+  document.getElementById('playerBar').classList.add('show');
+}
+
+async function searchNeteaseId(title, artist) {
+  const cacheKey = title + '|' + artist;
+  if (songUrlCache[cacheKey]) return songUrlCache[cacheKey];
+
+  const queries = [
+    title + ' ' + artist.split(' / ')[0],
+    title
+  ];
+
+  for (const query of queries) {
+    try {
+      const resp = await fetch('https://music.163.com/api/search/get/web?s=' + encodeURIComponent(query) + '&type=1&offset=0&limit=5');
+      if (!resp.ok) continue;
+      const data = await resp.json();
+      if (data.result && data.result.songs && data.result.songs.length > 0) {
+        const song = data.result.songs[0];
+        const id = song.id;
+        songUrlCache[cacheKey] = id;
+        return id;
+      }
+    } catch(e) {
+      continue;
+    }
+  }
+  return null;
+}
+
+async function getSongUrl(id) {
+  if (songUrlCache['url_' + id]) return songUrlCache['url_' + id];
+  try {
+    const resp = await fetch('https://music.163.com/song/media/outer/url?id=' + id + '.mp3');
+    // The URL itself is the redirect to the actual mp3
+    const finalUrl = resp.url || resp.redirected ? resp.url : ('https://music.163.com/song/media/outer/url?id=' + id + '.mp3');
+    songUrlCache['url_' + id] = finalUrl;
+    return finalUrl;
+  } catch(e) {
+    return null;
+  }
+}
+
+async function playSong(title, artist) {
+  showPlayerBar();
+  document.getElementById('playerLoading').classList.add('show');
+  document.getElementById('playerFallback').classList.remove('show');
+
+  const id = await searchNeteaseId(title, artist);
+  document.getElementById('playerLoading').classList.remove('show');
+
+  if (!id) {
+    const fb = document.getElementById('playerFallback');
+    const link = document.getElementById('fallbackLink');
+    const searchUrl = 'https://music.163.com/#/search/m/?s=' + encodeURIComponent(title + ' ' + artist);
+    link.href = searchUrl;
+    link.textContent = '> 没找到音源，去网易云搜索「' + title + ' - ' + artist.split(' / ')[0] + '」';
+    fb.classList.add('show');
+    return;
+  }
+
+  // Destroy previous player
+  if (ap) {
+    ap.destroy();
+    ap = null;
+  }
+
+  const container = document.getElementById('aplayer-container');
+  container.innerHTML = '';
+
+  const audioUrl = 'https://music.163.com/song/media/outer/url?id=' + id + '.mp3';
+
+  try {
+    ap = new APlayer({
+      container: container,
+      theme: '#f97316',
+      autoplay: true,
+      loop: 'none',
+      order: 'list',
+      preload: 'auto',
+      volume: 0.8,
+      mutex: true,
+      listFolded: true,
+      listMaxHeight: '0px',
+      lrcType: 0,
+      audio: [{
+        name: title,
+        artist: artist,
+        url: audioUrl,
+        cover: '',
+        theme: '#f97316',
+      }]
+    });
+
+    // Handle play error
+    ap.on('error', function() {
+      console.warn('Playback error for', title, id);
+      const fb = document.getElementById('playerFallback');
+      const link = document.getElementById('fallbackLink');
+      link.href = 'https://music.163.com/#/song?id=' + id;
+      link.textContent = '> 播放受限（可能是VIP歌曲），去网易云打开';
+      fb.classList.add('show');
+    });
+
+    document.getElementById('playerFallback').classList.remove('show');
+  } catch(e) {
+    console.error('APlayer init error:', e);
+    const fb = document.getElementById('playerFallback');
+    const link = document.getElementById('fallbackLink');
+    link.href = 'https://music.163.com/#/song?id=' + id;
+    link.textContent = '> 去网易云播放这首歌';
+    fb.classList.add('show');
+  }
+}
+
+let currentFilter=null;
+function filterByMood(mood){
+  currentFilter=mood;
+  const q=document.getElementById('searchInput').value.trim().toLowerCase();
+  let filtered=unique.filter(s=>s.m===mood);
+  if(q)filtered=filtered.filter(s=>s.t.toLowerCase().includes(q)||s.a.toLowerCase().includes(q));
+  renderSongs(filtered);
+}
+
+function filterSongs(q){
+  if(currentFilter){
+    filterByMood(currentFilter);
+  }else{
+    const filtered=unique.filter(s=>s.t.toLowerCase().includes(q)||s.a.toLowerCase().includes(q)||s.z.includes(q));
+    renderSongs(filtered);
+  }
+}
+
+function showAll(){
+  currentFilter=null;
+  document.querySelectorAll('.channel').forEach(el=>el.classList.remove('active'));
+  document.getElementById('listEmoji').textContent='🎵';
+  document.getElementById('listTitle').textContent='全部歌曲';
+  const q=document.getElementById('searchInput').value.trim().toLowerCase();
+  if(q){
+    filterSongs(q);
+  }else{
+    renderSongs(unique);
+  }
+}
+
+// ===== SCROLL ANIMATION =====
+const observer=new IntersectionObserver(entries=>{
+  entries.forEach(e=>{if(e.isIntersecting)e.target.classList.add('visible')});
+},{threshold:0.1});
+document.querySelectorAll('.fade-up').forEach(el=>observer.observe(el));
+
+// ===== INIT =====
+renderViz();
+renderChannels();
+renderArtists();
+renderTags();
+renderSongs(unique);
+
+document.getElementById('searchInput').addEventListener('input',e=>{
+  const q=e.target.value.trim().toLowerCase();
+  if(!q){showAll();return;}
+  filterSongs(q);
+});
+
+// Click song count to reset
+document.getElementById('songCount').addEventListener('click',()=>{
+  document.getElementById('searchInput').value='';
+  showAll();
+});
+</script>
+</body>
+</html>
